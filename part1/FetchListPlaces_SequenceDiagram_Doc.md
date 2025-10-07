@@ -1,12 +1,12 @@
 # Fetch a List of Places - Sequence Diagram Documentation
 
 
-### Purpose
+## Purpose
 This sequence diagram describes the steps involved when a user requests a list of places in the HBnB Evolution system.
 It illustrates the flow of information across the Presentation, Business Logic and Persistence layers.
 
 
-### Components
+## Components
 
 |Actor|Layer|Role|
 |---|---|---|
@@ -17,7 +17,7 @@ It illustrates the flow of information across the Presentation, Business Logic a
 |AmenityRepository|Persistence Layer (optional)|(If included) Fetches amenities for places|
 
 
-### Flow of Events
+## Flow of Events
 
 1. User sends a `GET /places?location=melbourne&price=450` request to the API
 
@@ -39,7 +39,7 @@ It illustrates the flow of information across the Presentation, Business Logic a
 
 
 
-### Alternatives
+## Alternatives
 
 - If no places are found, the service returns an empty list:
 	- API still responds with a `200 OK` status (along with an empty list [])
@@ -48,7 +48,7 @@ It illustrates the flow of information across the Presentation, Business Logic a
 
 
 
-### Design Considerations
+## Design Considerations
 
 - This call adheres to RESTful principles using the `GET` request
 
