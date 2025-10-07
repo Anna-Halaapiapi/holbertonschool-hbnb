@@ -1,18 +1,21 @@
 # Fetch a List of Places - Sequence Diagram Documentation
 
+
 ### Purpose
 This sequence diagram describes the steps involved when a user requests a list of places in the HBnB Evolution system.
 It illustrates the flow of information across the Presentation, Business Logic and Persistence layers.
+
 
 ### Components
 
 |Actor|Layer|Role|
 |---|---|---|
-|`User`|Client|Initiates the request via web/browser|
-|`PlaceAPI`|Presentation Layer|Receives and handles the HTTP GET request|
-|`PlaceService`|Business Logic Layer|Coordinates logic and filter processing|
-|`PlaceRepository`|Persistence Layer|Fetches place data from the database|
-|`AmenityRepository`|Persistence Layer (optional)|(If included) Fetches amenities for places|
+|User|Client|Initiates the request via web/browser|
+|PlaceAPI|Presentation Layer|Receives and handles the HTTP GET request|
+|PlaceService|Business Logic Layer|Coordinates logic and filter processing|
+|PlaceRepository|Persistence Layer|Fetches place data from the database|
+|AmenityRepository|Persistence Layer (optional)|(If included) Fetches amenities for places|
+
 
 ### Flow of Events
 
@@ -35,12 +38,14 @@ It illustrates the flow of information across the Presentation, Business Logic a
 9. `PlaceAPI` serialises the result into JSON and returns a `200 OK` HTTP response to the user.
 
 
+
 ### Alternatives
 
 - If no places are found, the service returns an empty list:
 	- API still responds with a `200 OK` status (along with an empty list [])
 
 - If an error occurs (invalid filter) then the API returns a `400 Bad Request` response along with an error message.
+
 
 
 ### Design Considerations
