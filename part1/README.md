@@ -1,0 +1,1 @@
+Comprehensive technical documentation that serve as the foundation for the development of the HBnB Evolution application. This includes a High-level Package Diagram, detailed Class Diagram for the Business Logic layer and Sequence Diagrams for API calls.
