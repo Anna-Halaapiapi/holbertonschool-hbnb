@@ -1,6 +1,6 @@
 # Review - Sequence Diagram Documentation
-This documentation corresponds with the Review Sequence Diagram, which  illustrates the process of creating a review in the HBnB application. 
-It shows how the various components interact with each other - to validate data and persist (save) a review.
+This documentation corresponds with the Review Sequence Diagram, which illustrates the process of creating a review in the HBnB application. 
+It shows how the various components interact with each other - to validate data and save a review.
 
 ## Overview
 
