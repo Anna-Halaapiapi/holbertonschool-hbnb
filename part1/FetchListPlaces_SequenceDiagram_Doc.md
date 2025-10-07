@@ -21,7 +21,7 @@ It illustrates the flow of information across the Presentation, Business Logic a
 
 1. User sends a `GET /places?location=melbourne&price=450` request to the API
 
-2. `PlaceAPI` parses the query parameters (converting HTTP request into Python format).
+2. `PlaceAPI` parses the query parameters (converting request into Python format).
 
 3. `PlaceAPI` calls `get_places(filters)` from `PlaceService` to retrieve matching places.
 
