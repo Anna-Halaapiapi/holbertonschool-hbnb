@@ -1,4 +1,6 @@
 from base_model import BaseModel
+from user import User
+from place import Place
 
 class Review(BaseModel):
     """ This module implements the Review logic
@@ -12,8 +14,6 @@ class Review(BaseModel):
         self.user = user
 
         self.validate() # Validate attribute values
-        user.add_review(self) # Link review to User
-        place.add_review(self) # Link review to Place
 
     def validate(self):
         if self.text is None or not isinstance(self.text, str):
@@ -27,9 +27,5 @@ class Review(BaseModel):
                 
         if not self.user or not isinstance(self.user, User): # must be a User instance leaving review
             raise ValueError("User instance must exist")
-        
-    def add_review(self, review):
-        """Add a review to the place."""
-        self.reviews.append(review)
-        review.user = self # Link review to user
-        review.place = self # Link review to place
+
+
