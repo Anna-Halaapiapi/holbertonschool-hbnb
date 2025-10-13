@@ -11,6 +11,7 @@ class User(BaseModel):
         self.last_name = str(last_name)
         self.email = str(email).lower().strip()  # remove whitespace
         self.is_admin = bool(is_admin)
+        self.places = []
 
         self.validate()  # validates attribute values
 
@@ -35,3 +36,7 @@ class User(BaseModel):
     def is_valid_email(self):
         pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
         return re.fullmatch(pattern, self.email) is not None
+
+    def add_place(self, place):
+        """Add place to user"""
+        self.places.append(place)
