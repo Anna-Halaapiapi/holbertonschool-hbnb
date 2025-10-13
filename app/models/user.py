@@ -1,16 +1,20 @@
 from base_model import BaseModel
+import re  # used for matching strings based on patterns
 
 class User(BaseModel):
+    existing_emails = set()
+
     def __init__(self, first_name, last_name, email, is_admin=False):
         super().__init__()  # Initialises UUID, created_at and updated_at
 
         self.first_name = str(first_name)
         self.last_name = str(last_name)
-        self.email = str(email).lower()
+        self.email = str(email).lower().strip()  # remove whitespace
         self.is_admin = bool(is_admin)
 
         self.validate()  # validates attribute values
-        User.existing_emails.add(self.email)  # add to in-memory repo
+
+        User.existing_emails.add(self.email)
 
     def validate(self):
         if not self.first_name or len(self.first_name) > 50:
@@ -29,6 +33,5 @@ class User(BaseModel):
             raise ValueError(f"Email {self.email} is already taken")
 
     def is_valid_email(self):
-        # add code to check for valid email address
-        pass
-       
+        pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+        return re.fullmatch(pattern, self.email) is not None
