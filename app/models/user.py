@@ -1,4 +1,4 @@
-from base_model import BaseModel
+from .base_model import BaseModel
 import re  # used for matching strings based on patterns
 
 class User(BaseModel):

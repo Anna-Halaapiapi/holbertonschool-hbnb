@@ -1,4 +1,4 @@
-from base_model import BaseModel
+from .base_model import BaseModel
 
 class Place(BaseModel):
     """ This class implements the Place logic

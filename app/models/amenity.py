@@ -1,4 +1,4 @@
-from base_model import BaseModel
+from .base_model import BaseModel
 
 class Amenity(BaseModel):
     existing_names = set()  # in-memory store of amenities
