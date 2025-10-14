@@ -37,8 +37,8 @@ class Place(BaseModel):
         if not (-180.0 <= self.longitude <= 180.0):
             raise ValueError("Longitude must be within -180 to 180")
         
-        if not self.owner or not isinstance(self.owner, User): # must be a User instance creating a place
-            raise ValueError("Owner must be an instance of User")
+        # if not self.owner or not isinstance(self.owner, User): # must be a User instance creating a place
+            # raise ValueError("Owner must be an instance of User")
 
     def add_review(self, review):
         """Add a review to the place."""
