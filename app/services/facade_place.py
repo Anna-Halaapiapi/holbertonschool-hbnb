@@ -27,12 +27,3 @@ class HBnBFacade:
             raise ValueError(f"Place with ID '{place_id}' not found")
         self.place_repo.update(place_id, place_data)
         return self.place_repo.get(place_id)
-    
-
-
- 
-
-    
-    
-        
-        
