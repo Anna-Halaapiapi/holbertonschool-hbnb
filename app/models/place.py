@@ -32,6 +32,7 @@ class Place(BaseModel):
             raise TypeError("Price must be a number")
         if value <= 0:
             raise ValueError("Price must be greater than zero")
+        self._price = float(value)
 
     # Property for latitude
     @property
