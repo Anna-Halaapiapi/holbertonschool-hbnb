@@ -26,7 +26,7 @@ class Place(BaseModel):
     def price(self):
         return self._price
 
-    @property.setter
+    @price.setter
     def price(self, value):
         if not isinstance(value, (int, float)):
             raise TypeError("Price must be a number")
@@ -38,7 +38,7 @@ class Place(BaseModel):
     def latitude(self):
         return self._latitude
 
-    @property.setter
+    @latitude.setter
     def latitude(self, value):
         if not isinstance(value, (int, float)):
             raise TypeError("Latitude must be a number")
@@ -51,7 +51,7 @@ class Place(BaseModel):
     def longitude(self):
         return self._longitude
 
-    @property.setter
+    @longitude.setter
     def longitude(self, value):
         if not isinstance(value, (int, float)):
             raise TypeError("Longitude must be a number")
