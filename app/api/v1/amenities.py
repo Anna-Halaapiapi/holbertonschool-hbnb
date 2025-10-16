@@ -1,10 +1,10 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from app.services.facade_amenity import HBnBFacade
+from app.services import facade
 
 
 api = Namespace('amenities', description='Amenity operations')
-facade = HBnBFacade()
+# facade = HBnBFacade()
 # Define the amenity model for input validation and documentation
 amenity_model = api.model('Amenity', {
     'name': fields.String(required=True, description='Name of the amenity')
@@ -29,8 +29,9 @@ class AmenityList(Resource):
     def get(self):
         """Retrieve a list of all amenities"""
         # Return a list of all amenities
-        amenities = facade.get_all_amenities()
-        return {"amenities": amenities}, 200
+        # amenities = facade.get_all_amenities()
+        # return {"amenities": amenities}, 200
+        return facade.get_all_amenities()
 
 
 @api.route('/<amenity_id>')
@@ -54,9 +55,19 @@ class AmenityResource(Resource):
         """Update an amenity's information"""
         # Update an amenity by ID
         data = request.get_json()
-        if not data or "name" not in data:
-            return {"message": "Invalid input"}, 400
-        updated = facade.update_amenity(amenity_id, data)
-        if not updated:
-            return {"message": "Amenity not found"}, 404
-        return updated, 200
+        # if not data or "name" not in data:
+            # return {"message": "Invalid input"}, 400
+        # updated = facade.update_amenity(amenity_id, data)
+        # if not updated:
+            # return {"message": "Amenity not found"}, 404
+        # return updated, 200
+        if not data:
+            return {"error": "Invalid input"}, 400
+        amenity = facade.get_amenity(amenity_id)
+        if not amenity:
+            return {"error": "Amenity not found"}, 404
+        if 'name' in data:
+            amenity.name = data['name']
+        updated_amenity = facade.update_amenity(amenity_id, data)
+        return updated_amenity, 200
+
