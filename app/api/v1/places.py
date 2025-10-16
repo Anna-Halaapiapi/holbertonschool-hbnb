@@ -16,6 +16,13 @@ user_model = api.model('PlaceUser', {
     'email': fields.String(description='Email of the owner')
 })
 
+review_model = api.model('PlaceReview', {
+    'id': fields.String(description='Review ID'),
+    'text': fields.String(description='Text of the review'),
+    'rating': fields.Integer(description='Rating of the place (1-5)'),
+    'user_id': fields.String(description='ID of the user')
+})
+
 # Define the place model for input validation and documentation
 place_model = api.model('Place', {
     'title': fields.String(required=True, description='Title of the place'),
@@ -24,7 +31,8 @@ place_model = api.model('Place', {
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
     'owner_id': fields.String(required=True, description='ID of the owner'),
-    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
+    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's"),
+    'reviews': fields.List(fields.Nested(review_model), description='List of reviews for the place')
 })
 
 def serialize_place(place):
@@ -37,6 +45,15 @@ def serialize_place(place):
             else:
                 amenities_list.append(str(amenity))
 
+    reviews_list = []
+    for review in facade.get_reviews_by_place(place.id):
+        reviews_list.append({
+            'id': review.id,
+            'text': review.text,
+            'rating': review.rating,
+            'user_id': review.user_id
+        })
+    
     return {
         'id': place.id,
         'title': place.title,
@@ -45,7 +62,8 @@ def serialize_place(place):
         'latitude': place.latitude,
         'longitude': place.longitude,
         'owner_id': place.owner.id,
-        'amenities': amenities_list
+        'amenities': amenities_list,
+        'reviews': reviews_list
     }
 
 @api.route('/')

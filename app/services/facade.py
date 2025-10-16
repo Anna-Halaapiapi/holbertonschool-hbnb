@@ -1,6 +1,7 @@
 from app.persistence.repository import InMemoryRepository
 from app.models.user import User
 from app.models.place import Place
+from app.models.review import Review
 
 class HBnBFacade:
     def __init__(self):
@@ -89,3 +90,47 @@ class HBnBFacade:
             raise ValueError(f"Place with ID '{place_id}' not found")
         self.place_repo.update(place_id, place_data)
         return self.place_repo.get(place_id)
+
+#Review methods
+    def create_review(self, review_data):
+        """Create a new review with validation."""
+        user_id = review_data.get('user_id')
+        place_id = review_data.get('place_id')
+        rating = review_data.get('rating')
+        text = review_data.get('text')
+
+        # Validate required fields
+        if not user_id or not place_id or not rating or not text:
+            return None, "Missing required fields"
+
+        # Validate user and place existence
+        user = self.get_user(user_id)
+        place = self.get_place(place_id)
+        if not user:
+            return None, "Invalid user_id"
+        if not place:
+            return None, "Invalid place_id"
+
+        # Validate rating
+        if not isinstance(rating, int) or rating < 1 or rating > 5:
+            return None, "Rating must be an integer between 1 and 5"
+
+        review = Review(**review_data)
+        self.review_repo.add(review)
+        return review, None
+
+    def get_review(self, review_id):
+        return self.review_repo.get(review_id)
+
+    def get_all_reviews(self):
+        return self.review_repo.get_all()
+
+    def get_reviews_by_place(self, place_id):
+        return [r for r in self.review_repo.get_all() if r.place_id == place_id]
+
+    def update_review(self, review_id, review_data):
+        review = self.review_repo.update(review_id, review_data)
+        return review
+
+    def delete_review(self, review_id):
+        return self.review_repo.delete(review_id)
