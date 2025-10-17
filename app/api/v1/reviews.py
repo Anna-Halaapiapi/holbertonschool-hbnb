@@ -78,7 +78,7 @@ class ReviewResource(Resource):
             return {'message': 'Review deleted successfully'}, 200
         return {'error': 'Review not found'}, 404
 
-@api.route('/places/<place_id>/reviews')
+@api.route('/places/<string:place_id>/reviews')
 class PlaceReviewList(Resource):
     @api.response(200, 'List of reviews for the place retrieved successfully')
     @api.response(404, 'Place not found')
