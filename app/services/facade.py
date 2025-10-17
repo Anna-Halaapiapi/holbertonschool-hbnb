@@ -136,7 +136,7 @@ class HBnBFacade:
     def delete_review(self, review_id):
         return self.review_repo.delete(review_id)
 
-# Place methods
+# Amenity methods
     def create_amenity(self, amenity_data):
         name = amenity_data.get("name")
         amenity = Amenity(name)
@@ -157,5 +157,5 @@ class HBnBFacade:
         amenity = self.amenity_repo.get(amenity_id)
         if not amenity:
             return None
-        amenity.name = amenity_data.update("name", amenity.name)
-        return {"id": amenity.id, "name": amenity.name}
+        amenity.name = amenity_data.get("name", amenity.name)
+        return amenity
