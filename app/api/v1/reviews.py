@@ -31,7 +31,10 @@ class ReviewList(Resource):
         """Register a new review""" 
         try:
             review_data = request.json
-            new_review = facade.create_review(review_data)
+            new_review, error = facade.create_review(review_data)
+
+            if error:
+                return {'error': error}, 400
             return serialize_review(new_review), 201
         except ValueError as e:
             return {'error': str(e)}, 400
@@ -60,9 +63,10 @@ class ReviewResource(Resource):
     @api.response(400, 'Invalid input data')
     def put(self, review_id):
         """Update a review's information"""
-        review = facade.get_review(review_id)
-        if review:
-            return serialize_review(review), 200
+        review_data = request.json
+        updated_review = facade.update_review(review_id, review_data)
+        if updated_review:
+            return serialize_review(updated_review), 200
         return {'error': 'Review not found'}, 404
 
     @api.response(200, 'Review deleted successfully')
@@ -80,7 +84,7 @@ class PlaceReviewList(Resource):
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Get all reviews for a specific place"""
-        place = facade.get_reviews_by_place(place_id)
+        place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
         reviews = facade.get_reviews_by_place(place_id)
