@@ -1,6 +1,6 @@
 # 🐞 Manual Testing and Validation of Endpoints
 
-<br>
+
 ## 🧍 User Testing
 
 **Step 1**. Create a new user:
@@ -18,8 +18,9 @@ curl -X POST "http://127.0.0.1:5000/api/v1/users/" -H "Content-Type: application
 
 > Expected output/response `"error": "Invalid input data" // 400 Bad Request`
 
-<br>
+
 ## 🏠 Place Testing
+
 
 ### Functionality Testing for Creating, Updating and Retrieving a Place / All Places 
 
@@ -89,7 +90,7 @@ curl -X POST http://localhost:5000/api/v1/users/ -H "Content-Type: application/j
 ```python
 curl -X POST http://localhost:5000/api/v1/places/ -H "Content-Type: application/json" -d '{"title":"Cozy Apartment","description":"A nice place to stay","price":100.0,"latitude":37.7749,"longitude":-192.4194,"owner_id":"<ENTER_OWNER_ID_HERE"}'
 ```
-<br>
+
 ### Testing with Missing / Empty values in Required Fields
 
 **Step 1**. Create user:
@@ -116,8 +117,10 @@ curl -X POST http://localhost:5000/api/v1/places/ -H "Content-Type: application/
 curl -X POST http://localhost:5000/api/v1/places/ -H "Content-Type: application/json" -d '{"title":"Cyberpunk Apartment","description":"A futuristic, tech-themed rental featuring neon lights!","price":"","latitude":37.7749,"longitude":-122.4194,"owner_id":"<ENTER_OWNER_ID_HERE"}'
 ```
 
-<br>
+
+
 ## ✍️ Review Testing
+
 
 ### Functionality Testing for Creating, Updating and Deleting a Review
 
@@ -157,7 +160,6 @@ curl -X PUT http://127.0.0.1:5000/api/v1/reviews/<review_id> -H "Content-Type: a
    curl -X DELETE http://127.0.0.1:5000/api/v1/reviews/<review_id>
    ```
 
-
 8. Get All Reviews for a Specific Place
 ```python
 curl -X GET http://127.0.0.1:5000/api/v1/places/<place_id>/reviews
@@ -181,25 +183,25 @@ curl -X POST http://localhost:5000/api/v1/places/ -H "Content-Type: application/
 curl -X POST http://127.0.0.1:5000/api/v1/reviews/ -H "Content-Type: application/json" -d '{"text":"","rating":5,"user_id":"e204eaa0-1fd4-4244-802a-8e6e863b0182","place_id":"a997c251-f7cf-4eca-9927-890bd1341a8e"}'
 ```
 
-3. Create a review with missing Rating:
+4. Create a review with missing Rating:
 
 ```python
 curl -X POST http://127.0.0.1:5000/api/v1/reviews/ -H "Content-Type: application/json" -d '{"text":"Awesome place!","rating":"","user_id":"e204eaa0-1fd4-4244-802a-8e6e863b0182","place_id":"a997c251-f7cf-4eca-9927-890bd1341a8e"}'
 ```
 
-4. Create a review with missing/incorrect User_ID:
+5. Create a review with missing/incorrect User_ID:
 
 ```python
 curl -X POST http://127.0.0.1:5000/api/v1/reviews/ -H "Content-Type: application/json" -d '{"text":"Awesome place!","rating":"5","user_id":"","place_id":"a997c251-f7cf-4eca-9927-890bd1341a8e"}'
 ```
 
-5. Create a review with missing/incorrect Place_ID:
+6. Create a review with missing/incorrect Place_ID:
 
 ```python
 curl -X POST http://127.0.0.1:5000/api/v1/reviews/ -H "Content-Type: application/json" -d '{"text":"Awesome place!","rating":"5","user_id":"<ENTER_ACTUAL_USER_ID_HERE>","place_id":""}'
 ```
 
-6. Create a review with rating outside of the review range (>5):
+7. Create a review with rating outside of the review range (>5):
 
 ```python
 curl -X POST http://127.0.0.1:5000/api/v1/reviews/ -H "Content-Type: application/json" -d '{"text":"Awesome place!","rating":"9","user_id":"<ENTER_ACTUAL_USER_ID_HERE>","place_id":"<ENTER_PLACE_ID_HERE"}'
@@ -207,6 +209,7 @@ curl -X POST http://127.0.0.1:5000/api/v1/reviews/ -H "Content-Type: application
 
 
 ## 🧴 Amenity Testing
+
 
 1. Create a new Amenity POST
 
