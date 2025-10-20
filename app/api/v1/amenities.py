@@ -19,8 +19,8 @@ class AmenityList(Resource):
         """Register a new amenity"""
         # Register a new amenity
         data = request.get_json()
-        if not data or "name" not in data:
-            return {"message": "Invalid input"}, 400
+        if not data or 'name' not in data:
+            return {"error": "Invalid input"}, 400
         new_amenity = facade.create_amenity(data)
         return new_amenity, 201
 
