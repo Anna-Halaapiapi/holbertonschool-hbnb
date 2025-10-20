@@ -99,6 +99,8 @@ class PlaceResource(Resource):
         """Get place details by ID"""
         try:
             place = facade.get_place(place_id)
+            if place is None:
+                return {'error': 'Place not found'}, 404
             return serialize_place(place), 200
         except ValueError as e:
             return {'error': str(e)}, 400
