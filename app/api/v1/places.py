@@ -103,6 +103,8 @@ class PlaceResource(Resource):
                 return {'error': 'Place not found'}, 404
             return serialize_place(place), 200
         except ValueError as e:
+            if 'not found' in str(e).lower():
+                return {'error': str(e)}, 404
             return {'error': str(e)}, 400
 
     @api.expect(place_model)
