@@ -146,7 +146,7 @@ class TestAPIEndpoints(unittest.TestCase):
             "description": "Futuristic Apartment with Neon Lights",
             "price": 950.0,
             "latitude": 40.7128,
-            "Longitude": -74.0060,
+            "longitude": -74.0060,
             "owner_id": user_id
         })
         self.assertEqual(place_res.status_code, 201)
@@ -156,7 +156,7 @@ class TestAPIEndpoints(unittest.TestCase):
         create_res = self.client.post('/api/v1/reviews/', json={
             "text": "Great stay!",
             "rating": 5,
-            "user_id": user_id
+            "user_id": user_id,
             "place_id": place_id
         })
         self.assertEqual(create_res.status_code, 201)
