@@ -45,7 +45,7 @@ class TestAPIEndpoints(unittest.TestCase):
         self.assertIn("errors", invalid_res.get_json())
 
         # NOT FOUND
-        not_found_res = self.client.get('/api/v1/users/doesnotexist')
+        not_found_res = self.client.get('/api/v1/users/00000000-0000-0000-0000-000000000000')
         self.assertEqual(not_found_res.status_code, 404)
 
     # AMENITY TESTS
@@ -125,7 +125,7 @@ class TestAPIEndpoints(unittest.TestCase):
         self.assertIn("error", invalid_res.get_json())
 
         # NOT FOUND
-        not_found_res = self.client.get('/api/v1/places/doesnotexist')
+        not_found_res = self.client.get('/api/v1/places/00000000-0000-0000-0000-000000000000')
         self.assertEqual(not_found_res.status_code, 404)
 
     # REVIEW TESTS
@@ -141,7 +141,7 @@ class TestAPIEndpoints(unittest.TestCase):
         user_id = user_res.get_json()["id"]
         
         # Second create a place
-        place_res = self.client.post('/api/v1/places', json={
+        place_res = self.client.post('/api/v1/places/', json={
             "title": "Cyberpunk Place",
             "description": "Futuristic Apartment with Neon Lights",
             "price": 950.0,
