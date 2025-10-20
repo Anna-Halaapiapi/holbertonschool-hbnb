@@ -78,14 +78,23 @@ class TestAPIEndpoints(unittest.TestCase):
 
     # PLACE TESTS
     def test_place_crud(self):
-        # CREATE
+        # Create user to be the owner
+        user_res = self.client.post('/api/v1/users/', json={
+            "first_name": "Jane",
+            "last_name": "Doe",
+            "email": "owner@example.com"
+        })
+        self.assertEqual(user_res.status_code, 201)
+        owner_id = user_res.get_json()["id"]
+        
+        # Create place with newly created  owner_id
         create_res = self.client.post('/api/v1/places/', json={
             "title": "Cozy Apartment",
             "description": "A nice place to stay",
             "price": 100.0,
             "latitude": 37.7749,
             "longitude": -122.4194,
-            # "owner_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            "owner_id": owner_id
         })
         self.assertEqual(create_res.status_code, 201)
         data = create_res.get_json()
@@ -122,11 +131,33 @@ class TestAPIEndpoints(unittest.TestCase):
     # REVIEW TESTS
     def test_review_crud(self):
         # CREATE
+        # First create a user
+        user_res = self.client.post('/api/v1/users/', json={
+            "first_name": "Reviewer",
+            "last_name": "Doe",
+            "email": "reviewer@example.com"
+        })
+        self.assertEqual(user_res.status_code, 201)
+        user_id = user_res.get_json()["id"]
+        
+        # Second create a place
+        place_res = self.client.post('/api/v1/places', json={
+            "title": "Cyberpunk Place",
+            "description": "Futuristic Apartment with Neon Lights",
+            "price": 950.0,
+            "latitude": 40.7128,
+            "Longitude": -74.0060,
+            "owner_id": user_id
+        })
+        self.assertEqual(place_res.status_code, 201)
+        place_id = place_res.get_json()["id"]
+
+        # Next create the review
         create_res = self.client.post('/api/v1/reviews/', json={
             "text": "Great stay!",
             "rating": 5,
-            "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "place_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            "user_id": user_id
+            "place_id": place_id
         })
         self.assertEqual(create_res.status_code, 201)
         data = create_res.get_json()
