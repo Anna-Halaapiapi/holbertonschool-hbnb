@@ -92,7 +92,7 @@ class HBnBFacade:
         self.place_repo.update(place_id, place_data)
         return self.place_repo.get(place_id)
 
-#Review methods
+    # Review methods
     def create_review(self, review_data):
         """Create a new review with validation."""
         user_id = review_data.get('user_id')
@@ -101,7 +101,7 @@ class HBnBFacade:
         text = review_data.get('text')
 
         # Validate required fields
-        if not user_id or not place_id or not rating or not text:
+        if user_id is None or place_id is None or rating is None or not text:
             return None, "Missing required fields"
 
         # Validate user and place existence
@@ -116,7 +116,14 @@ class HBnBFacade:
         if not isinstance(rating, int) or rating < 1 or rating > 5:
             return None, "Rating must be an integer between 1 and 5"
 
-        review = Review(**review_data)
+        # construct review with objects
+        review = Review(
+            text=text,
+            rating=rating,
+            user=user,
+            place=place
+        )
+
         self.review_repo.add(review)
         return review, None
 
@@ -127,7 +134,7 @@ class HBnBFacade:
         return self.review_repo.get_all()
 
     def get_reviews_by_place(self, place_id):
-        return [r for r in self.review_repo.get_all() if r.place_id == place_id]
+        return [r for r in self.review_repo.get_all() if r.place.id == place_id]
 
     def update_review(self, review_id, review_data):
         review = self.review_repo.update(review_id, review_data)
@@ -136,7 +143,7 @@ class HBnBFacade:
     def delete_review(self, review_id):
         return self.review_repo.delete(review_id)
 
-# Amenity methods
+    # Amenity methods
     def create_amenity(self, amenity_data):
         name = amenity_data.get("name")
         amenity = Amenity(name)

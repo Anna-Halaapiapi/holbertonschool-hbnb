@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from app.api.v1.reviews import serialize_review
 
 api = Namespace('places', description='Place operations')
 
@@ -116,3 +117,14 @@ class PlaceResource(Resource):
             return {'error': 'PLce not found'}, 400
         except ValueError as e:
             return {'error': str(e)}, 400
+
+@api.route('/<string:place_id>/reviews')
+class PlaceReviewList(Resource):
+    @api.response(200, 'List of reviews for the place retrieved successfully')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        """Get all reviews for a specific place"""
+        reviews = facade.get_reviews_by_place(place_id)
+        if not reviews:
+            return {'error': 'Place not found or has no reviews'}, 404
+        return [serialize_review(r) for r in reviews], 200

@@ -12,38 +12,38 @@ review_model = api.model('Review', {
     'place_id': fields.String(required=True, description='ID of the place')
 })
 
+def serialize_review(review):
+    """Function serializes review object"""
+    return {
+        'id': review.id,
+        'text': review.text,
+        'rating': review.rating,
+        'user_id': review.user.id,
+        'place_id': review.place.id
+        }
+
 @api.route('/')
 class ReviewList(Resource):
     @api.expect(review_model, validate=True)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
     def post(self):
-        """Register a new review"""
-        review_data = api.payload
-        review, error = facade.create_review(review_data)
-        if error:
-            return {'error': error}, 400
-        return {
-            'id': review.id,
-            'text': review.text,
-            'rating': review.rating,
-            'user_id': review.user_id,
-            'place_id': review.place_id
-        }, 201
+        """Register a new review""" 
+        try:
+            review_data = request.json
+            new_review, error = facade.create_review(review_data)
+
+            if error:
+                return {'error': error}, 400
+            return serialize_review(new_review), 201
+        except ValueError as e:
+            return {'error': str(e)}, 400
 
     @api.response(200, 'List of reviews retrieved successfully')
     def get(self):
         """Retrieve a list of all reviews"""
         reviews = facade.get_all_reviews()
-        return [
-            {
-                'id': r.id,
-                'text': r.text,
-                'rating': r.rating,
-                'user_id': r.user_id,
-                'place_id': r.place_id
-            } for r in reviews
-        ], 200
+        return [serialize_review(review) for review in reviews], 200  # build and return a list of serialized reviews
 
 
 @api.route('/<review_id>')
@@ -53,15 +53,9 @@ class ReviewResource(Resource):
     def get(self, review_id):
         """Get review details by ID"""
         review = facade.get_review(review_id)
-        if not review:
-            return {'error': 'Review not found'}, 404
-        return {
-            'id': review.id,
-            'text': review.text,
-            'rating': review.rating,
-            'user_id': review.user_id,
-            'place_id': review.place_id
-        }, 200
+        if review:
+            return serialize_review(review), 200
+        return {'error': 'Review not found'}, 404
 
     @api.expect(review_model)
     @api.response(200, 'Review updated successfully')
@@ -69,40 +63,29 @@ class ReviewResource(Resource):
     @api.response(400, 'Invalid input data')
     def put(self, review_id):
         """Update a review's information"""
-        update_data = request.get_json()
-        review = facade.update_review(review_id, update_data)
-        if not review:
-            return {'error': 'Review not found'}, 404
-        return {
-            'id': review.id,
-            'text': review.text,
-            'rating': review.rating,
-            'user_id': review.user_id,
-            'place_id': review.place_id
-        }, 200
+        review_data = request.json
+        updated_review = facade.update_review(review_id, review_data)
+        if updated_review:
+            return serialize_review(updated_review), 200
+        return {'error': 'Review not found'}, 404
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
     def delete(self, review_id):
         """Delete a review"""
         deleted = facade.delete_review(review_id)
-        if not deleted:
-            return {'error': 'Review not found'}, 404
-        return {'message': 'Review deleted successfully'}, 200
+        if deleted:
+            return {'message': 'Review deleted successfully'}, 200
+        return {'error': 'Review not found'}, 404
 
-
-@api.route('/places/<place_id>/reviews')
+@api.route('/places/<string:place_id>/reviews')
 class PlaceReviewList(Resource):
     @api.response(200, 'List of reviews for the place retrieved successfully')
+    @api.response(404, 'Place not found')
     def get(self, place_id):
         """Get all reviews for a specific place"""
+        place = facade.get_place(place_id)
+        if not place:
+            return {'error': 'Place not found'}, 404
         reviews = facade.get_reviews_by_place(place_id)
-        return [
-            {
-                'id': r.id,
-                'text': r.text,
-                'rating': r.rating,
-                'user_id': r.user_id,
-                'place_id': r.place_id
-            } for r in reviews
-        ], 200
+        return [serialize_review(review) for review in reviews], 200  # build and return a list of serialized reviews
