@@ -1,7 +1,7 @@
-# Manual Testing and Validation of Endpoints
+# 🐞 Manual Testing and Validation of Endpoints
 
 
-## User Testing
+## 🧍 User Testing
 
 **Step 1**. Create a new user:
 
@@ -19,7 +19,7 @@ curl -X POST "http://127.0.0.1:5000/api/v1/users/" -H "Content-Type: application
 >[!NOTE:] Expected output/response `"error": "Invalid input data" // 400 Bad Request`
 
 
-## Place Testing
+## 🏠 Place Testing
 
 ### Functionality Testing for Creating, Updating and Retrieving a Place / All Places 
 
@@ -117,7 +117,7 @@ curl -X POST http://localhost:5000/api/v1/places/ -H "Content-Type: application/
 ```
 
 
-## Review Testing
+## ✍️ Review Testing
 
 ### Functionality Testing for Creating, Updating and Deleting a Review
 
@@ -206,7 +206,7 @@ curl -X POST http://127.0.0.1:5000/api/v1/reviews/ -H "Content-Type: application
 ```
 
 
-## Amenity Testing
+## 🧴 Amenity Testing
 
 1. Create a new Amenity POST
 
