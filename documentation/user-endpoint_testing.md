@@ -1,6 +1,6 @@
 # 🐞 Manual Testing and Validation of Endpoints
 
-
+<br>
 ## 🧍 User Testing
 
 **Step 1**. Create a new user:
@@ -16,9 +16,9 @@ curl -X POST "http://127.0.0.1:5000/api/v1/users/" -H "Content-Type: application
 curl -X POST "http://127.0.0.1:5000/api/v1/users/" -H "Content-Type: application/json" -d '{"first_name": "", "last_name": "", "email": "invalid-email"}'
 ```
 
->[!NOTE:] Expected output/response `"error": "Invalid input data" // 400 Bad Request`
+> Expected output/response `"error": "Invalid input data" // 400 Bad Request`
 
-
+<br>
 ## 🏠 Place Testing
 
 ### Functionality Testing for Creating, Updating and Retrieving a Place / All Places 
@@ -89,7 +89,7 @@ curl -X POST http://localhost:5000/api/v1/users/ -H "Content-Type: application/j
 ```python
 curl -X POST http://localhost:5000/api/v1/places/ -H "Content-Type: application/json" -d '{"title":"Cozy Apartment","description":"A nice place to stay","price":100.0,"latitude":37.7749,"longitude":-192.4194,"owner_id":"<ENTER_OWNER_ID_HERE"}'
 ```
-
+<br>
 ### Testing with Missing / Empty values in Required Fields
 
 **Step 1**. Create user:
@@ -116,7 +116,7 @@ curl -X POST http://localhost:5000/api/v1/places/ -H "Content-Type: application/
 curl -X POST http://localhost:5000/api/v1/places/ -H "Content-Type: application/json" -d '{"title":"Cyberpunk Apartment","description":"A futuristic, tech-themed rental featuring neon lights!","price":"","latitude":37.7749,"longitude":-122.4194,"owner_id":"<ENTER_OWNER_ID_HERE"}'
 ```
 
-
+<br>
 ## ✍️ Review Testing
 
 ### Functionality Testing for Creating, Updating and Deleting a Review
