@@ -1,5 +1,14 @@
 # 🐞 Manual Testing and Validation of Endpoints
 
+Our manual testing and validation of endpoints focused on verifying the Create, Read, Update, Delete functionality of the API endpoints for users, places, amenities, and reviews. The goal was to ensure each route returned the correct status codes and JSON responses for valid and invalid requests. We tested for:
+
+**Boundary Testing:** out of range input
+
+**Required Fields:** missing or empty values
+
+**Error Handling:** non-existent data
+
+Our manual and unit tests confirmed that all our end points are processing data as expected within the in-memory persistence. We have also compared our results against the Swagger Documentation to ensure the endpoints accurately reflect the API specifications. 
 
 ## 🧍 User Testing
 
