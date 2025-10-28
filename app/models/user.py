@@ -1,5 +1,5 @@
 from .base_model import BaseModel
-from app import bcrypt
+from app.extensions import bcrypt
 import re  # used for matching strings based on patterns
 
 class User(BaseModel):
