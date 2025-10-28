@@ -1,10 +1,11 @@
 from .base_model import BaseModel
+from app import bcrypt
 import re  # used for matching strings based on patterns
 
 class User(BaseModel):
     existing_emails = set()
 
-    def __init__(self, first_name, last_name, email, is_admin=False):
+    def __init__(self, first_name, last_name, email, password=None, is_admin=False):
         super().__init__()  # Initialises UUID, created_at and updated_at
 
         self.first_name = str(first_name)
@@ -12,8 +13,12 @@ class User(BaseModel):
         self.email = str(email).lower().strip()  # remove whitespace
         self.is_admin = bool(is_admin)
         self.places = []
+        self.password = None
 
         self.validate()  # validates attribute values
+
+        if password:
+            self.hash_password(password)
 
         User.existing_emails.add(self.email)
 
@@ -40,3 +45,11 @@ class User(BaseModel):
     def add_place(self, place):
         """Add place to user"""
         self.places.append(place)
+
+    def hash_password(self, password):
+        """Hashes the password before storing it."""
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+    
+    def verify_password(self, password):
+        """Verifies if the provided password matches the hashed password."""
+        return bcrypt.check_password_hash(self.password, password)
