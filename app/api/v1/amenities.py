@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
 from app.services import facade
-
+from flask_jwt_extended import jwt_required, get_jwt
 
 api = Namespace('amenities', description='Amenity operations')
 # facade = HBnBFacade()
@@ -15,6 +15,7 @@ class AmenityList(Resource):
     @api.expect(amenity_model)
     @api.response(201, 'Amenity successfully created')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def post(self):
         """Register a new amenity"""
         # Register a new amenity
@@ -51,6 +52,7 @@ class AmenityResource(Resource):
     @api.response(200, 'Amenity updated successfully')
     @api.response(404, 'Amenity not found')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def put(self, amenity_id):
         """Update an amenity's information"""
         data = request.get_json()
