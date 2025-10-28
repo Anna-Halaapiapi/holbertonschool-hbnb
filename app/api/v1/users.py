@@ -8,7 +8,8 @@ api = Namespace('users', description='User operations') #creates a “group” o
 user_model = api.model('User', {
     'first_name': fields.String(required=True, description='First name of the user'),
     'last_name': fields.String(required=True, description='Last name of the user'),
-    'email': fields.String(required=True, description='Email of the user')
+    'email': fields.String(required=True, description='Email of the user'),
+    'password': fields.String(required=True, description='Password (will be securely hashed)')
 })
 
 @api.route('/')
@@ -27,7 +28,12 @@ class UserList(Resource):
         if existing_user:
             return {'error': 'Email already registered'}, 400
 
-        new_user = facade.create_user(user_data)
+        # Create user with hashed password
+        try:
+            new_user = facade.create_user(user_data)
+        except ValueError as e:
+            return {'error': str(e)}, 400
+
         return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
     
     def get(self):
