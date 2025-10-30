@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from app.api.v1.reviews import serialize_review
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 api = Namespace('places', description='Place operations')
 
@@ -72,10 +73,13 @@ class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
+    @jwt_required() # ensures user is authenticated (checks user has valid token)
     def post(self):
         """Register a new place"""
         try:
+            current_user = get_jwt_identity() # get user ID from token
             place_data = api.payload
+            place_data['owner_id'] = current_user # set owner_id to ID of the authenticated user
             new_place = facade.create_place(place_data)
             return serialize_place(new_place), 201
         except ValueError as e:
