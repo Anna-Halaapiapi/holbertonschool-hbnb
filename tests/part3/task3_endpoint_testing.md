@@ -114,9 +114,10 @@ curl -X POST "http://127.0.0.1:5000/api/v1/auth/login" -d '{"email": "johnny.doe
 curl -v -X PUT "http://127.0.0.1:5000/api/v1/places/USER_A_PLACE_ID" -d '{"title": "Updated Place"}' -H "Authorization: Bearer USER_B_TOKEN" -H "Content-Type: application/json"
 ```
 **Expected Response:**
+```bash
+> HTTP/1.1 403 FORBIDDEN
+```
 ```json
-< HTTP/1.1 403 FORBIDDEN
-...
 {
     "error": "Unauthorized action"
 }
@@ -128,9 +129,10 @@ curl -v -X PUT "http://127.0.0.1:5000/api/v1/places/USER_A_PLACE_ID" -d '{"title
 curl -v -X PUT "http://127.0.0.1:5000/api/v1/places/USER_A_PLACE_ID" -d '{"title": "Updated Place"}' -H "Authorization: Bearer USER_A_TOKEN" -H "Content-Type: application/json"
 ```
 **Expected Output:**
+```bash
+> HTTP/1.1 200 OK
+```
 ```json
-< HTTP/1.1 200 OK
-...
 {
     "id": "7e32f...",
     "title": "Updated Place",
@@ -181,9 +183,10 @@ The aim of this test is to verify that a place owner is unable to leave a review
 curl -v -X POST "http://127.0.0.1:5000/api/v1/reviews/" -d '{"place_id": "USER_A_PLACE_ID", "text": "This is my own place!", "rating": 5, "user_id": "placeholder"}' -H "Authorization: Bearer USER_A_TOKEN" -H "Content-Type: application/json"
 ```
 **Expected Response:**
+```bash
+> HTTP/1.1 400 BAD REQUEST
+```
 ```json
-< HTTP/1.1 400 BAD REQUEST
-...
 {
     "error": "You cannot review your own place."
 }
@@ -196,9 +199,10 @@ The aim of this test is to verify that a user cannot review the same place more 
 curl -v -X POST "http://127.0.0.1:5000/api/v1/reviews/" -d '{"place_id": "USER_A_PLACE_ID", "text": "This is another review for same place!", "rating": 5, "user_id": "placeholder"}' -H "Authorization: Bearer USER_B_TOKEN" -H "Content-Type: application/json"
 ```
 **Expected Response:**
+```bash
+> HTTP/1.1 400 BAD REQUEST
+```
 ```json
-< HTTP/1.1 400 BAD REQUEST
-...
 {
     "error": "You have already reviewed this place."
 }
@@ -212,8 +216,10 @@ The aim of this test is to verify that an authorized user can update their own r
 curl -v -X PUT "http://127.0.0.1:5000/api/v1/reviews/USER_B_REVIEW_ID" -d '{"text": "Updated review", "rating": 4}' -H "Authorization: Bearer USER_B_TOKEN" -H "Content-Type: application/json"
 ```
 **Expected Response**
+```bash
+> HTTP/1.1 200 OK
+```
 ```json
-< HTTP/1.1 200 OK
 {
     "id": "f98b....",
     "text": "Updated review",
@@ -230,9 +236,10 @@ The aim of this test is to verify that an unauthorized user is unable to update 
 curl -v -X PUT "http://127.0.0.1:5000/api/v1/reviews/USER_B_REVIEW_ID" -d '{"text": "Trying to change someone else’s review"}' -H "Authorization: Bearer USER_A_TOKEN" -H "Content-Type: application/json"
 ```
 **Expected Response:**
+```bash
+> HTTP/1.1 403 FORBIDDEN
+```
 ```json
-< HTTP/1.1 403 FORBIDDEN
-...
 {
     "error": "Unauthorized action."
 }
@@ -246,9 +253,10 @@ The aim of this test is to verify that an unauthorized user cannot delete anothe
 curl -v -X DELETE "http://127.0.0.1:5000/api/v1/reviews/USER_B_REVIEW_ID" -H "Authorization: Bearer USER_A_TOKEN"
 ```
 **Expected output**
+```bash
+> HTTP/1.1 403 FORBIDDEN
+```
 ```json
-< HTTP/1.1 403 FORBIDDEN
-...
 {
     "error": "Unauthorized action."
 }
@@ -261,9 +269,10 @@ The aim of this test is to verify that an authorized user can delete their own r
 curl -v -X DELETE "http://127.0.0.1:5000/api/v1/reviews/USER_B_REVIEW_ID" -H "Authorization: Bearer USER_B_TOKEN"
 ```
 **Expected Response:**
+```bash
+> HTTP/1.1 200 OK
+```
 ```json
-< HTTP/1.1 200 OK
-...
 {
     "message": "Review deleted successfully"
 }
@@ -277,9 +286,10 @@ The aim of this test is to verify that an authorized user is able to update thei
 curl -v -X PUT "http://127.0.0.1:5000/api/v1/users/USER_A_ID" -d '{"first_name": "Janey"}' -H "Authorization: Bearer USER_A_TOKEN" -H "Content-Type: application/json"
 ```
 **Expected Response:**
+```bash
+> HTTP/1.1 200 OK
+```
 ```json
-< HTTP/1.1 200 OK
-...
 {
     "id": "0a1...",
     "first_name": "Janey",
@@ -294,9 +304,10 @@ The aim of this test is to verify that a user (unauthorized) is unable to update
 curl -v -X PUT "http://127.0.0.1:5000/api/v1/users/USER_A_ID" -d '{"first_name": "HackersName"}' -H "Authorization: Bearer USER_B_TOKEN" -H "Content-Type: application/json"
 ```
 **Expected Response:**
+```bash
+> HTTP/1.1 403 FORBIDDEN
+```
 ```json
-< HTTP/1.1 403 FORBIDDEN
-...
 {
     "error": "Unauthorized action."
 }
@@ -309,9 +320,10 @@ The aim of this test is to verify that a user (authorized) is unable to update a
 curl -v -X PUT "http://127.0.0.1:5000/api/v1/users/USER_A_ID" -d '{"email": "new.email@example.com"}' -H "Authorization: Bearer USER_A_TOKEN" -H "Content-Type: application/json"
 ```
 **Expected Response:**
+```bash
+> HTTP/1.1 400 BAD REQUEST
+```
 ```json
-< HTTP/1.1 400 BAD REQUEST
-...
 {
     "error": "You cannot modify email or password."
 }
@@ -324,9 +336,10 @@ The aim of this test is to verify that a user (authorized) is unable to update a
 curl -v -X PUT "http://127.0.0.1:5000/api/v1/users/USER_A_ID" -d '{"password": "mynewpassword123"}' -H "Authorization: Bearer USER_A_TOKEN" -H "Content-Type: application/json"
 ```
 **Expected Response:**
+```bash
+> HTTP/1.1 400 BAD REQUEST
+```
 ```json
-< HTTP/1.1 400 BAD REQUEST
-...
 {
     "error": "You cannot modify email or password."
 }
@@ -340,9 +353,10 @@ The aim of this test is to verify accessibility to retrieving a list of places w
 curl -v -X GET "http://127.0.0.1:5000/api/v1/places/"
 ```
 **Expected Response:**
+```bash
+> HTTP/1.1 200 OK
+```
 ```json
-< HTTP/1.1 200 OK
-...
 [
     {
         "id": "7e3...",
@@ -365,9 +379,10 @@ The aim of this test is to verify accessibility to getting detailed information 
 curl -X GET "http://127.0.0.1:5000/api/v1/places/PLACE_ID"
 ```
 **Expected Response:**
+```bash
+> HTTP/1.1 200 OK
+```
 ```json
-< HTTP/1.1 200 OK
-...
 {
     "id": "7e3...",
     "title": "Updated Place",
