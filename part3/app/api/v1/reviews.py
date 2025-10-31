@@ -78,9 +78,19 @@ class ReviewResource(Resource):
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Unauthorized action.')
+    @jwt_required() # ensure user is authenticated
     def put(self, review_id):
         """Update a review's information"""
-        review_data = request.json
+        review_data = request.json # get review data from HTTP request
+        current_user = get_jwt_identity() # get current user's id
+        review = facade.get_review(review_id) # get existing review object
+
+        # Check: user id of review matches the auth'd user
+        if review.user.id != current_user: # return error for mismatch
+            return {'error': 'Unauthorized action.'}, 403
+
+        # update review logic
         updated_review = facade.update_review(review_id, review_data)
         if updated_review:
             return serialize_review(updated_review), 200
