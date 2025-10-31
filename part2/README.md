@@ -5,6 +5,7 @@ This file documents the core backend logic and RESTful API for the HBnB Evolutio
 
 ## 📁 Project Blueprint
 
+```
 HOLBERTONSCHOOL-HBNB/
 ├── app/
 │   ├── __init__.py         
@@ -43,6 +44,7 @@ HOLBERTONSCHOOL-HBNB/
 ├── README.md
 ├── requirements.txt        # Project dependencies
 └── run.py                  # Entry point to run the application
+```
 
 ## 🚀 Getting Started
 
