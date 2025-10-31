@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
 from app.services import facade
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 api = Namespace('reviews', description='Review operations')
 
@@ -27,12 +28,28 @@ class ReviewList(Resource):
     @api.expect(review_model, validate=True)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
+    @jwt_required() # ensure user is authenticated
     def post(self):
         """Register a new review""" 
         try:
-            review_data = request.json
-            new_review, error = facade.create_review(review_data)
+            current_user = get_jwt_identity() # get the id of the auth'd user
+            review_data = request.json # get dict of HTTP request data
+            place_id = review_data.get('place_id') # get place id from the HTTP request data
+            place = facade.get_place(place_id) # get place object by id
 
+            # Check: user doesn't own the place they are trying to review
+            if place.owner.id == current_user: # return error if user is owner of place
+                return {'error': 'You cannot review your own place.'}, 400
+
+            # Check: user hasn't already reviewed the place
+            existing_reviews = facade.get_reviews_by_place(place_id) # get all existing reviews for the place
+            for review in existing_reviews: # loop through existing reviwws
+                if review.user.id == current_user: # return error if user already reviewed place
+                    return {'error': 'You have already reviewed this place.'}, 400
+
+            # logic to create a new review
+            review_data['user_id'] = current_user # make user id the current user's id
+            new_review, error = facade.create_review(review_data)
             if error:
                 return {'error': error}, 400
             return serialize_review(new_review), 201
