@@ -14,16 +14,32 @@ amenity_model = api.model('Amenity', {
 class AmenityList(Resource):
     @api.expect(amenity_model)
     @api.response(201, 'Amenity successfully created')
-    @api.response(400, 'Invalid input data')
+    @api.response(400, 'Invalid input data or amenity already exists')
+    @api.resopnse(403, 'Admin privileges required')
     @jwt_required()
     def post(self):
-        """Register a new amenity"""
-        # Register a new amenity
+        """Create a new amenity - Admin only"""
+        current_user = get_jwt_identity()
+        if not current_user.get('is_admin', False): # if not 'is_admin' then False is returned
+            return, {'error': 'Admin privileges required'}, 403
+        
+        # Create amenity
         data = request.get_json()
         if not data or 'name' not in data:
             return {"error": "Invalid input"}, 400
-        new_amenity = facade.create_amenity(data)
-        return new_amenity, 201
+
+        name = data['name'].strip()
+        if not name:
+            return {'error': 'Amenity cannot be empty'}, 400
+
+        # Ensure name is unique
+        existing = facade.get_amenity_by_name(name)
+        if existing:
+            return {'error': {'Amenity already exists'}, 400
+
+                    
+        new_amenity = facade.create_amenity({'name': name})
+        return {'id': new_amenity.id, 'name': new_amenity.name}, 201
 
 
     @api.response(200, 'List of amenities retrieved successfully')
@@ -32,7 +48,9 @@ class AmenityList(Resource):
         # Return a list of all amenities
         # amenities = facade.get_all_amenities()
         # return {"amenities": amenities}, 200
-        return facade.get_all_amenities()
+        amenities = facade.get_all_amenities()
+        return [{'id': a.id, 'name': a.name} for a in amenities], 200
+
 
 
 @api.route('/<amenity_id>')
