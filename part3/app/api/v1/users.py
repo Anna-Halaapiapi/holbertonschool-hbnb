@@ -18,10 +18,16 @@ class UserList(Resource):
     @api.expect(user_model, validate=True)
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered')
-    @api.response(400, 'Invalid input data')
-
+    @api.response(403, 'Admin privileges required')
+    @jwt_required() # Authentication required
     def post(self):
-        """Register a new user"""
+        """Create a new user - Admin only"""
+        current_user = get_jwt_identity()
+
+        # Check admin privileges
+        if not current_user.get('is_admin', False):
+            return {'error': 'Admin privileges required'}, 403
+
         user_data = api.payload
 
         # Simulate email uniqueness check (to be replaced by real validation with persistence)
@@ -63,13 +69,59 @@ class UserResource(Resource):
         return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 200
 
     @api.response(200, 'User updated successfully')
-    @api.response(404, 'User not found')
     @api.response(400, 'Invalid input')
+    @api.response(400, 'Email already in use')
+    @api.response(400, 'Password cannot be empty')
+    @api.response(400, 'You cannot modify email or password')
     @api.response(403, 'Unauthorized action.')
+    @api.response(404, 'User not found')
     @jwt_required() # ensure user is authenticated
     def put(self, user_id):
-        """Update user details by ID"""
+        """Update user details by ID - Admin can modify any user"""
         current_user = get_jwt_identity() # get current auth'd user's id
+        update_data = request.get_json()
+
+        if not update_data:
+            return {'error': 'Invalid input'}, 400
+
+        user = facade.get_user(user_id)
+        if not user:
+            return {'error': 'User not found'}, 404
+
+
+        # -- ADMIN LOGIC --
+
+        # Check Admin privileges
+        if current_user.get('is_admin', False): # Check if user is admin. If not 'False' then logic continues.
+            
+            # Admin can update email
+            email = update_data.get('email')
+
+            # Ensure email uniqueness
+            if email:
+                existing_user = facade.get_user_by_email(email)
+                if existing_user and existing_user.id != user_id:
+                    return {'error': 'Email already in use'}, 400
+
+            # Admin can update password(s)
+            password = update_data.get('password')
+            # Validate if password is provided
+            if password is not None:
+                if not isinstance(password, str) or not password.strip():
+                    return {'error': 'Password cannot be empty'}, 400
+                update_data['password'] = password.strip() # p/w is hashed by the Facade
+
+            # Admin can update all other fields
+            updated_user = facade.update_user(user_id, update_data)
+            return {
+                'id': updated_user.id,
+                'first_name': updated_user.first_name,
+                'last_name': updated_user.last_name,
+                'email': updated_user.email
+            }, 200
+
+
+        # -- REGULAR USER LOGIC --
 
         # Check: user_id in URL matches current user's id
         if user_id != current_user: # return error if user is trying to mod another user's data
@@ -83,11 +135,7 @@ class UserResource(Resource):
         if 'email' in update_data or 'password' in update_data: # if email/password in request, return error
             return {'error': 'You cannot modify email or password.'}, 400
 
-        user = facade.get_user(user_id)
-        if not user:
-            return {'error': 'User not found'}, 404
-
-        # Update user fields if they exist in the request
+        # Update user first/last name if they exist in the request
         if 'first_name' in update_data:
             user.first_name = update_data['first_name']
         if 'last_name' in update_data:
