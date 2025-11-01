@@ -72,7 +72,6 @@ class UserResource(Resource):
     @api.response(400, 'Invalid input')
     @api.response(400, 'Email already in use')
     @api.response(400, 'Password cannot be empty')
-    @api.response(400, 'You cannot modify email or password')
     @api.response(403, 'Unauthorized action.')
     @api.response(404, 'User not found')
     @jwt_required() # ensure user is authenticated
