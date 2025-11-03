@@ -7,16 +7,13 @@ class Place(BaseModel):
         super().__init__()
 
         self.title = str(title)
-        self.description = description
+        self.description = description #optional
         self.price = float(price)
         self.latitude = float(latitude)
         self.longitude = float(longitude)
         self.owner = owner
         self.reviews = []  # List to store related reviews
         self.amenities = []  # List to store related amenities
-
-        if not owner: # Validate to ensure owner exists
-            raise ValueError("A Place must have an owner")
         
         self.validate() # Validate attribute values
         owner.add_place(self) # Link place to user
@@ -67,12 +64,24 @@ class Place(BaseModel):
         
         if self.description is not None and not isinstance(self.description, str):
             raise TypeError("Description is optional but must be a string")
+        
+        if not self.owner: # Validate to ensure owner exists
+            raise ValueError("A Place must have an owner")
 
     # Relationship methods - reviews and amenities
     def add_review(self, review):
         """Add a review to the place."""
-        self.reviews.append(review)
+        #add check to make sure added data is correct type
+        if not isinstance(review, str):
+            raise ValueError("A review must be a string")
+        else:
+            self.reviews.append(review)
+
 
     def add_amenity(self, amenity):
         """Add an amenity to the place."""
-        self.amenities.append(amenity)
+        #add check to make sure added data is correct type
+        if not isinstance(amenity, str):
+            raise ValueError("An amenity must be a string")
+        else:
+            self.amenities.append(amenity)

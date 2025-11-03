@@ -63,13 +63,13 @@ def serialize_place(place):
         'latitude': place.latitude,
         'longitude': place.longitude,
         'owner_id': place.owner.id,
-        'amenities': amenities_list,
-        'reviews': reviews_list
+        # 'amenities': amenities_list,
+        # 'reviews': reviews_list
     }
 
 @api.route('/')
 class PlaceList(Resource):
-    @api.expect(place_model)
+    @api.expect(place_model, validate=True)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
     def post(self):

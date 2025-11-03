@@ -6,8 +6,8 @@ class Amenity(BaseModel):
     def __init__(self, name):
         super().__init__()  # initialise UUID and timestamps
 
-        self.name = str(name).strip()  # strip (remove) whitespace before/after string
-
+        # self.name = str(name).strip()  # strip (remove) whitespace before/after string
+        self.name = name
         self.validate()
 
         Amenity.existing_names.add(self.name)  # add amenity name after validation
@@ -17,5 +17,5 @@ class Amenity(BaseModel):
             raise ValueError("Amenity name is required")
         if len(self.name) > 50:
             raise ValueError("Amenity name must be less than 50 characters")
-        if self.name in Amenity.existing_names:
+        # if self.name in Amenity.existing_names:
             raise ValueError(f"Amenity {self.name} already exists")

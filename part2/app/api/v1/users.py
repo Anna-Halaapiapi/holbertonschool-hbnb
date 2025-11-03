@@ -64,6 +64,7 @@ class UserResource(Resource):
     @api.response(200, 'User updated successfully')
     @api.response(404, 'User not found')
     @api.response(400, 'Invalid input')
+    @api.expect(user_model, validate=True)
     def put(self, user_id):
         """Update user details by ID"""
         update_data = request.get_json() 

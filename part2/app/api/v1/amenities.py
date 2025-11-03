@@ -12,16 +12,16 @@ amenity_model = api.model('Amenity', {
 
 @api.route('/')
 class AmenityList(Resource):
-    @api.expect(amenity_model)
+    @api.expect(amenity_model, validate=True)
     @api.response(201, 'Amenity successfully created')
     @api.response(400, 'Invalid input data')
-    @jwt_required()
+    # @jwt_required()
     def post(self):
         """Register a new amenity"""
         # Register a new amenity
         data = request.get_json()
-        if not data or 'name' not in data:
-            return {"error": "Invalid input"}, 400
+        # if not data or 'name' not in data:
+            # return {"error": "Invalid input"}, 400
         new_amenity = facade.create_amenity(data)
         return new_amenity, 201
 
@@ -48,7 +48,7 @@ class AmenityResource(Resource):
         return amenity, 200
 
   
-    @api.expect(amenity_model)
+    @api.expect(amenity_model, validate=True)
     @api.response(200, 'Amenity updated successfully')
     @api.response(404, 'Amenity not found')
     @api.response(400, 'Invalid input data')
