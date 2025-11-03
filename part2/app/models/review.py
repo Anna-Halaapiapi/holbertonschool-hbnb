@@ -1,6 +1,5 @@
 from .base_model import BaseModel
 from .user import User
-from .place import Place
 
 class Review(BaseModel):
     """ This module implements the Review logic
@@ -22,6 +21,7 @@ class Review(BaseModel):
         if not isinstance(self.rating, int) or not (1 <= self.rating <= 5):
             raise ValueError("Rating must be within 1 to 5")
 
+        from .place import Place
         if not self.place or not isinstance(self.place, Place): # must be a Place instance being reviewed
             raise ValueError("Place instance must exist")
                 

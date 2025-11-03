@@ -1,5 +1,4 @@
 from .base_model import BaseModel
-from .review import Review
 from .amenity import Amenity
 
 class Place(BaseModel):
@@ -33,7 +32,7 @@ class Place(BaseModel):
     def title(self, value):
         if not isinstance(value, str):
             raise TypeError("Title must be a string")
-        if not value or len(value.strip()) == 0):
+        if not value or len(value.strip()) == 0:
             raise ValueError("Title cannot be empty")
         if len(value) > 100:
             raise ValueError("Title must not exceed 100 characters")
@@ -102,6 +101,7 @@ class Place(BaseModel):
     # Relationship methods - reviews and amenities
     def add_review(self, review):
         """Add a review to the place."""
+        from .review import Review
         if not isinstance(review, Review):
             raise TypeError("Review must be an instance of Review") # -- Validation check for Review instance (to append to) --
         self.reviews.append(review)
