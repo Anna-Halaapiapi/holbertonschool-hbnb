@@ -19,7 +19,7 @@ class UserRegister(Resource):
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered')
     def post(self):
-        """Create a new user (regular user)"""
+        """Create a new user - Regular user"""
 
         # -- Get user data from request --
         user_data = api.payload
