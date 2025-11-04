@@ -4,7 +4,9 @@ from app.services import facade
 from flask_jwt_extended import jwt_required, get_jwt
 
 api = Namespace('amenities', description='Amenity operations')
+
 # facade = HBnBFacade()
+
 # Define the amenity model for input validation and documentation
 amenity_model = api.model('Amenity', {
     'name': fields.String(required=True, description='Name of the amenity')
@@ -74,12 +76,23 @@ class AmenityResource(Resource):
     def put(self, amenity_id):
         """Update an amenity's information"""
         data = request.get_json()
+
+        # -- Validation for missing 'name' during update --
         if not data or 'name' not in data:
-            return {"error": "Invalid input"}, 400
+            return {"error": "Name attribute is required to update amenity"}, 400 # -- clearer message for missing 'name' --
+
+        # -- Retrieve amenity by ID --
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
             return {"error": "Amenity not found"}, 404
+
+        name = data['name'].strip()
+        if not name:
+            return {'error': 'Amenity name cannot be empty'}, 400 # -- Ensure name is not empty for update after stripping --
+
+        # -- Update amenity in database --
         updated_amenity = facade.update_amenity(amenity_id, {"name": data['name']})
         if not updated_amenity:
             return {"error": "Update failed"}, 400
+
         return {"id": updated_amenity.id, "name": updated_amenity.name}, 200
