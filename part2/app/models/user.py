@@ -86,6 +86,9 @@ class User(BaseModel):
     # -- Relationships--
     def add_place(self, place):
         """Associate Place with this user"""
+        # -- add validation --
+        if not isinstance(place, Place):
+            raise TypeError("You can only add a Place instance to a user.")
         self.places.append(place)
 
 

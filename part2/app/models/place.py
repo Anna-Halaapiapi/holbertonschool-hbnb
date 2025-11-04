@@ -103,11 +103,11 @@ class Place(BaseModel):
         """Add a review to the place."""
         from .review import Review
         if not isinstance(review, Review):
-            raise TypeError("Review must be an instance of Review") # -- Validation check for Review instance (to append to) --
+            raise TypeError("You can only add a Review instance to a Place") # -- Validation check for Review instance (to append to) --
         self.reviews.append(review)
 
     def add_amenity(self, amenity):
         """Add an amenity to the place."""
         if not isinstance(amenity, Amenity):
-            raise TypeError("Amenity must be an instance of Amenity") # -- Validation check for Amenity instance (to append to) --
+            raise TypeError("You can only add an Amenity instance to a Place") # -- Validation check for Amenity instance (to append to) --
         self.amenities.append(amenity)
