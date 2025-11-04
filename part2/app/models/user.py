@@ -71,13 +71,13 @@ class User(BaseModel):
 
         email_clean = value.strip().lower()
         if not self.is_valid_email(email_clean):
-            raise ValueError(f"Invalid email format: {email_clean}")
+            raise ValueError("A valid email address is required")
 
         self._email = email_clean
 
 
     # -- Validation Helper --
-    def is_valid_email(self):
+    def is_valid_email(self, email):
         """Check is provided email matches accepted pattern"""
         pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
         return re.fullmatch(pattern, self.email) is not None
