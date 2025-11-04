@@ -94,12 +94,12 @@ class ReviewResource(Resource):
         # -- Validation: Check if rating is within valid range (1-5) --
         rating = review_data.get('rating')
         if rating and (rating < 1 or rating > 5):
-            return {'error': 'Rating must be between 1 and 5'), 400
+            return {'error': 'Rating must be between 1 and 5'}, 400
 
         # -- Validation: Ensure text is not empty --
         text = review_data.get('text')
         if not text or not text.strip():
-            return {'error': 'Review text cannot be empty'), 400
+            return {'error': 'Review text cannot be empty'}, 400
 
 
         # Update review logic
