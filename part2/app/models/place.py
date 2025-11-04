@@ -1,5 +1,4 @@
 from .base_model import BaseModel
-from .amenity import Amenity
 
 class Place(BaseModel):
     """ This class implements the Place logic
@@ -16,9 +15,7 @@ class Place(BaseModel):
         self.reviews = []  # List to store related reviews
         self.amenities = []  # List to store related amenities
 
-        if not owner: # Validate to ensure owner exists
-            raise ValueError("A Place must have an owner")
-        
+       
         self.validate() # Validate attribute values
         owner.add_place(self) # Link place to user
 
@@ -36,7 +33,7 @@ class Place(BaseModel):
             raise ValueError("Title cannot be empty")
         if len(value) > 100:
             raise ValueError("Title must not exceed 100 characters")
-        self.title = value.strip()
+        self._title = value.strip()
 
 
     # Property for price
@@ -108,6 +105,7 @@ class Place(BaseModel):
 
     def add_amenity(self, amenity):
         """Add an amenity to the place."""
+        from .amenity import Amenity
         if not isinstance(amenity, Amenity):
             raise TypeError("You can only add an Amenity instance to a Place") # -- Validation check for Amenity instance (to append to) --
         self.amenities.append(amenity)
