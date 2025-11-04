@@ -17,7 +17,7 @@ class AmenityList(Resource):
     @api.expect(amenity_model)
     @api.response(201, 'Amenity successfully created')
     @api.response(400, 'Invalid input data or amenity already exists')
-    @api.resopnse(403, 'Admin privileges required')
+    @api.response(403, 'Admin privileges required')
     @jwt_required()
     def post(self):
         """Create a new amenity - Admin only"""
@@ -37,7 +37,7 @@ class AmenityList(Resource):
         # Ensure name is unique
         existing = facade.get_amenity_by_name(name)
         if existing:
-            return {'error': {'Amenity already exists'}, 400
+            return {'error': 'Amenity already exists'}, 400
 
                     
         new_amenity = facade.create_amenity({'name': name})
