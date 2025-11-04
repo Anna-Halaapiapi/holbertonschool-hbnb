@@ -90,7 +90,19 @@ class ReviewResource(Resource):
         if review.user.id != current_user: # return error for mismatch
             return {'error': 'Unauthorized action.'}, 403
 
-        # update review logic
+
+        # -- Validation: Check if rating is within valid range (1-5) --
+        rating = review_data.get('rating')
+        if rating and (rating < 1 or rating > 5):
+            return {'error': 'Rating must be between 1 and 5'), 400
+
+        # -- Validation: Ensure text is not empty --
+        text = review_data.get('text')
+        if not text or not text.strip():
+            return {'error': 'Review text cannot be empty'), 400
+
+
+        # Update review logic
         updated_review = facade.update_review(review_id, review_data)
         if updated_review:
             return serialize_review(updated_review), 200
