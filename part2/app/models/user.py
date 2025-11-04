@@ -80,7 +80,7 @@ class User(BaseModel):
     def is_valid_email(self, email):
         """Check is provided email matches accepted pattern"""
         pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
-        return re.fullmatch(pattern, self.email) is not None
+        return re.fullmatch(pattern, email) is not None
 
 
     # -- Relationships--
