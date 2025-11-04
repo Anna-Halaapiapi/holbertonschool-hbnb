@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
 from app.services import facade
-from flask_jwt_extended import jwt_required, get_jwt
+from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 
 api = Namespace('amenities', description='Amenity operations')
 
@@ -23,7 +23,7 @@ class AmenityList(Resource):
         """Create a new amenity - Admin only"""
         current_user = get_jwt_identity()
         if not current_user.get('is_admin', False): # if not 'is_admin' then False is returned
-            return, {'error': 'Admin privileges required'}, 403
+            return {'error': 'Admin privileges required'}, 403
         
         # Create amenity
         data = request.get_json()
