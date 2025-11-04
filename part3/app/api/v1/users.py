@@ -84,13 +84,13 @@ class UserResource(Resource):
     @api.response(400, 'Password cannot be empty')
     @api.response(403, 'Unauthorized action.')
     @api.response(404, 'User not found')
-    @api.expect(user_update_model, validate=True)
     @jwt_required() # ensure user is authenticated
     def put(self, user_id):
         """Update user details by ID - Admin can modify any user"""
+        
         current_user = get_jwt_identity() # get current auth'd user's id
+        
         update_data = request.get_json()
-
         if not update_data:
             return {'error': 'Invalid input'}, 400
 
@@ -153,9 +153,6 @@ class UserResource(Resource):
         if user_id != current_user: # return error if user is trying to mod another user's data
             return {'error': 'Unauthorized action.'}, 403
 
-        update_data = request.get_json() 
-        if not update_data:
-            return {'error': 'Invalid input'}, 400
 
         # Check: prevent user from modding their email or password
         if 'email' in update_data or 'password' in update_data: # if email/password in request, return error
