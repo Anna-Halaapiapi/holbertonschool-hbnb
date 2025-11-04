@@ -33,20 +33,29 @@ place_model = api.model('Place', {
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
     'owner_id': fields.String(required=True, description='ID of the owner'),
-    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's"),
-    'reviews': fields.List(fields.Nested(review_model), description='List of reviews for the place')
+    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
 })
 
 def serialize_place(place):
     """Function serializes place object"""
+
     amenities_list = []
     if hasattr(place, 'amenities') and place.amenities:
         for amenity in place.amenities:
-            if hasattr(amenity, 'id'):
-                amenities_list.append(amenity.id)
-            else:
-                amenities_list.append(str(amenity))
+            amenities_list.append({
+                'id': amenity.id,
+                'name': amenity.name
+            })
 
+    # -- Serialize owner (nested data) --
+    owner = {
+        'id': place.owner.id,
+        'first_name': place.owner.first_name,
+        'last_name': place.owner.last_name,
+        'email': place.owner.email
+    }
+
+    # -- Serialize reviews (nested data) --
     reviews_list = []
     for review in facade.get_reviews_by_place(place.id):
         reviews_list.append({
@@ -56,6 +65,7 @@ def serialize_place(place):
             'user_id': review.user_id
         })
     
+
     return {
         'id': place.id,
         'title': place.title,
@@ -63,9 +73,9 @@ def serialize_place(place):
         'price': place.price,
         'latitude': place.latitude,
         'longitude': place.longitude,
-        'owner_id': place.owner.id,
-        'amenities': amenities_list,
-        'reviews': reviews_list
+        'owner': owner # -- Nested owner data --
+        'amenities': amenities_list, # -- Nested amenities data (unchanged) --
+        'reviews': reviews_list # -- Nested reviews data (unchanged) --
     }
 
 @api.route('/')
@@ -80,6 +90,13 @@ class PlaceList(Resource):
             current_user = get_jwt_identity() # get user ID from token
             place_data = api.payload
             place_data['owner_id'] = current_user # set owner_id to ID of the authenticated user
+            
+
+            # -- Ensure 'reviews' are not passed in payload --
+            if 'reviews' in place_data:
+                del place_data['reviews']
+
+
             new_place = facade.create_place(place_data)
             return serialize_place(new_place), 201
         except ValueError as e:
@@ -124,7 +141,14 @@ class PlaceResource(Resource):
             place = facade.get_place(place_id) # get place object by its ID
             if place.owner.id != current_user: # check authenticated user's id matches place owner's id
                 return {'error': 'Unauthorized action'}, 403 # return error if auth'd user is not owner
-            # logic to update the place
+            
+
+            # -- Ensure 'reviews' are not passed in payload during update --
+            if 'reviews' in api.payload:
+                del api.payload['reviews']
+
+
+            # Update Place Logic
             place_data = api.payload
             updated_place = facade.update_place(place_id, place_data)
             if updated_place:
