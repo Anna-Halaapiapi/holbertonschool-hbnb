@@ -1,21 +1,19 @@
 from .base_model import BaseModel
 
 class Amenity(BaseModel):
-    existing_names = set()  # in-memory store of amenities
 
     def __init__(self, name):
         super().__init__()  # initialise UUID and timestamps
+        self.name = name # calls setter, validation happens automatically
 
-        self.name = str(name).strip()  # strip (remove) whitespace before/after string
+    @property
+    def name(self):
+        return self._name
 
-        self.validate()
-
-        Amenity.existing_names.add(self.name)  # add amenity name after validation
-
-    def validate(self):
-        if not self.name:
-            raise ValueError("Amenity name is required")
-        if len(self.name) > 50:
+    @name.setter
+    def name(self, value):
+        if not value or not isinstance(value, str) or not value.strip():
+            raise ValueError("Amenity name is required and cannot be empty.")
+        if len(value.strip()) > 50:
             raise ValueError("Amenity name must be less than 50 characters")
-        if self.name in Amenity.existing_names:
-            raise ValueError(f"Amenity {self.name} already exists")
+        self._name = value.strip()
