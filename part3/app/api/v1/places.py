@@ -73,7 +73,7 @@ def serialize_place(place):
         'price': place.price,
         'latitude': place.latitude,
         'longitude': place.longitude,
-        'owner': owner # -- Nested owner data --
+        'owner': owner, # -- Nested owner data --
         'amenities': amenities_list, # -- Nested amenities data (unchanged) --
         'reviews': reviews_list # -- Nested reviews data (unchanged) --
     }
