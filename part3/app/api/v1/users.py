@@ -55,7 +55,7 @@ class UserList(Resource):
                 'email': user.email
             })
         return users_list, 200
-    
+  
 
 @api.route('/<user_id>')
 class UserResource(Resource):
@@ -68,12 +68,23 @@ class UserResource(Resource):
             return {'error': 'User not found'}, 404
         return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 200
 
+
+    # -- Update model defined for Swagger documentation --
+    user_update_model = api.model('UserUpdate', {
+        'first_name': fields.String(required=False, description='Updated first name'),
+        'last_name': fields.String(required=False, description='Updated last name'),
+        'email': fields.String(required=False, description='Updated email address'),
+        'password': fields.String(required=False, description='Updated password')
+    })
+
+    @api.expect(user_update_model, validate=True) # -- References model so not all fields are required when user updates info --
     @api.response(200, 'User updated successfully')
     @api.response(400, 'Invalid input')
     @api.response(400, 'Email already in use')
     @api.response(400, 'Password cannot be empty')
     @api.response(403, 'Unauthorized action.')
     @api.response(404, 'User not found')
+    @api.expect(user_update_model, validate=True)
     @jwt_required() # ensure user is authenticated
     def put(self, user_id):
         """Update user details by ID - Admin can modify any user"""
@@ -110,7 +121,23 @@ class UserResource(Resource):
                     return {'error': 'Password cannot be empty'}, 400
                 update_data['password'] = password.strip() # p/w is hashed by the Facade
 
-            # Admin can update all other fields
+
+            # -- Admin can update all other fields --
+            if 'first_name' in update_data:
+                user.first_name = update_data['first_name']
+            if 'last_name' in update_data:
+                user.last_name = update_data['last_name']
+            if 'email' in update_data:
+                user.email = update_data['email']
+
+
+            # -- validate before persisting --
+            try:
+                user.validate()
+            except ValueError as e:
+                return {'error': str(e)}, 400
+
+
             updated_user = facade.update_user(user_id, update_data)
             return {
                 'id': updated_user.id,
@@ -139,6 +166,14 @@ class UserResource(Resource):
             user.first_name = update_data['first_name']
         if 'last_name' in update_data:
             user.last_name = update_data['last_name']
+
+
+        # -- validate before persisting --
+        try:
+            user.validate()
+        except ValueError as e:
+            return {'error': str(e)}, 400
+
 
         updated_user = facade.update_user(user_id, update_data)
         if not updated_user:
