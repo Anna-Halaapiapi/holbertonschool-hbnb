@@ -11,6 +11,9 @@ class HBnBFacade:
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
 
+        # -- Bootstrap Admin for testing --
+        self.bootstrap_admin()
+
     # Placeholder method for creating a user
     def create_user(self, user_data):
         user = User(**user_data)
@@ -166,3 +169,17 @@ class HBnBFacade:
             return None
         amenity.name = amenity_data.get("name", amenity.name)
         return amenity
+
+    # -- BOOTSTRAP METHOD FOR ADMIN - IN-MEMORY --
+    def bootstrap_admin(self):
+        """Create a default admin user for testing"""
+
+        if not self.get_user_by_email("admin@example.com"):
+            admin_user = User(
+                first_name="Super",
+                last_name="Admin",
+                email="admin@example.com",
+                password="adminpassword",
+                is_admin=True
+            )
+            self.user_repo.add(admin_user)
