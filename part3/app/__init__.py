@@ -26,7 +26,14 @@ def create_app(config_class="config.DevelopmentConfig"):
         }
     }
 
-    api = Api(app, version='1.0', title='HBnB API', description='HBnB Application API', doc='/api/v1/')
+    api = Api(
+        app,
+        version='1.0',
+        title='HBnB API',
+        description='HBnB Application API',
+        doc='/api/v1/',
+        authorizations=authorizations # -- TO DELETE AFTER TESTING --
+    )
 
     # Register the users namespace
     api.add_namespace(users_ns, path='/api/v1/users')
@@ -38,6 +45,6 @@ def create_app(config_class="config.DevelopmentConfig"):
     api.add_namespace(reviews_ns, path="/api/v1/reviews")
     # Register auth namespace
     api.add_namespace(auth_ns, path='/api/v1/auth')
-    # Register admin namespace
+    # Register admin namespace -- TO BE DELETED --
     # api.add_namespace(admin_api, path='/api/v1/admin')
     return app
