@@ -17,7 +17,7 @@ def create_app(config_class="config.DevelopmentConfig"):
 
 
     # -- DEV USE ONLY! THIS IS TO ADD JWT AUTHORIZATION BUTTON IN SWAGGER -- 
-     authorizations = {
+    authorizations = {
         'jwt': {
             'type': 'apiKey',
             'in': 'header',
