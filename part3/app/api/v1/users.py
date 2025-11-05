@@ -34,6 +34,7 @@ class AdminUserCreate(Resource):
     @api.response(400, 'Email already registered')
     @api.response(403, 'Admin privileges required')
     @jwt_required()
+    @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
     def post(self):
         """Create a new user - Admin only"""
         current_user = get_jwt_identity()
@@ -80,7 +81,7 @@ class AdminUserCreate(Resource):
   
 
 @api.route('/<user_id>')
-class AdminUserResource(Resource):
+class AdminUserModify(Resource):
     @api.response(200, 'User details retrieved successfully')
     @api.response(404, 'User not found')
     @jwt_required()
