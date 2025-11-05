@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from flask import request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 
 # User-facing endpoints
@@ -37,10 +37,11 @@ class AdminUserCreate(Resource):
     @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
     def post(self):
         """Create a new user - Admin only"""
-        current_user = get_jwt_identity()
+        current_user_id = get_jwt_identity() # -- Get just the ID --
+        claims = get_jwt() # -- Dict containing additional_claims (is_admin) -- 
 
         # -- Check admin privileges --
-        if not current_user.get('is_admin', False):
+        if not claims.get('is_admin', False):
             return {'error': 'Admin privileges required'}, 403
 
         user_data = request.json
@@ -58,13 +59,16 @@ class AdminUserCreate(Resource):
             return {'error': str(e)}, 400
 
         return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
+    
 
+    @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
     @jwt_required()
     def get(self):
         """Get list of all users - Admin only"""
 
-        current_user = get_jwt_identity()
-        if not current_user.get('is_admin', False):
+        current_user_id = get_jwt_identity()  # This is a string
+        claims = get_jwt()                    # This is a dict containing additional_claims
+        if not claims.get("is_admin", False):
             return {'error': 'Admin privileges required'}, 403
 
         all_users = facade.get_all_users()
@@ -84,17 +88,20 @@ class AdminUserCreate(Resource):
 class AdminUserModify(Resource):
     @api.response(200, 'User details retrieved successfully')
     @api.response(404, 'User not found')
+    @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
     @jwt_required()
     def get(self, user_id): 
         """Retrieve user details - Admin can view any user / user can view own details"""
 
-        current_user = get_jwt_identity()
+        current_user_id = get_jwt_identity()  # This is a string
+        claims = get_jwt()                    # This is a dict containing additional_claims
+        
         user = facade.get_user(user_id)
         if not user:
             return {'error': 'User not found'}, 404
 
         # -- Allow admins or the user themselves --
-        if not current_user.get('is_admin', False) and str(user_id) != str(current_user['id']):
+        if not claims.get('is_admin', False) and str(user_id) != str(current_user_id):
             return {'error': 'Unauthorized action.'}, 403
 
         return {
@@ -110,6 +117,7 @@ class AdminUserModify(Resource):
     @api.response(400, 'Invalid input or email already in use')
     @api.response(403, 'Unauthorized action.')
     @api.response(404, 'User not found')
+    @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
     @jwt_required()
     def put(self, user_id):
         """Update user details - Admin can modify any user / users can only modify their own"""
