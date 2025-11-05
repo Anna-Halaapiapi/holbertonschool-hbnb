@@ -13,35 +13,49 @@ amenity_model = api.model('Amenity', {
 })
 
 @api.route('/')
-class AmenityList(Resource):
+class AdminAmenityCreate(Resource):
     @api.expect(amenity_model)
     @api.response(201, 'Amenity successfully created')
-    @api.response(400, 'Invalid input data or amenity already exists')
+    @api.response(400, 'Amenity already exists or invalid input')
     @api.response(403, 'Admin privileges required')
+    @api.doc(security='jwt') # -- USER FOR SWAGGER AUTH. DELETE WHEN TESTING IS COMPLETE --
     @jwt_required()
     def post(self):
         """Create a new amenity - Admin only"""
-        current_user = get_jwt_identity()
-        if not current_user.get('is_admin', False): # if not 'is_admin' then False is returned
+        claims = get_jwt()
+
+        if not claims:
             return {'error': 'Admin privileges required'}, 403
         
         # Create amenity
         data = request.get_json()
-        if not data or 'name' not in data:
-            return {"error": "Invalid input"}, 400
+        name = data.get('name')
 
-        name = data['name'].strip()
+
+        # -- Check if name is empty --
         if not name:
             return {'error': 'Amenity cannot be empty'}, 400
 
-        # Ensure name is unique
-        existing = facade.get_amenity_by_name(name)
-        if existing:
+        # -- Check if amenity name already exists --
+        if facade.get_amenity_by_name(name):
             return {'error': 'Amenity already exists'}, 400
+        
+        # -- Create amenity -- 
+        try:
+            # -- verify that data is valid --
+            if not isinstance(name, str) or len(name.strip()) == 0:
+                return {'error': 'Invalid input: Amenity name cannot be empty'}, 400
 
-                    
-        new_amenity = facade.create_amenity({'name': name})
-        return {'id': new_amenity.id, 'name': new_amenity.name}, 201
+
+            new_amenity = facade.create_amenity(data)
+        except ValueError as e:
+            return {'error': str(e)}, 400
+
+        return {
+            'id': new_amenity.id,
+            'name': new_amenity.name
+        }, 201
+        
 
 
     @api.response(200, 'List of amenities retrieved successfully')
@@ -56,7 +70,7 @@ class AmenityList(Resource):
 
 
 @api.route('/<amenity_id>')
-class AmenityResource(Resource):
+class AdminAmenityResource(Resource):
     @api.response(200, 'Amenity details retrieved successfully')
     @api.response(404, 'Amenity not found')
     def get(self, amenity_id):
@@ -68,31 +82,65 @@ class AmenityResource(Resource):
         return amenity, 200
 
   
-    @api.expect(amenity_model)
+    @api.expect(amenity_model, validate=True)
     @api.response(200, 'Amenity updated successfully')
+    @api.response(400, 'Invalid input data or name cannot be empty')
+    @api.response(403, 'Admin privileges required')
     @api.response(404, 'Amenity not found')
-    @api.response(400, 'Invalid input data')
+    @api.doc(security='jwt') # -- USED FOR SWAGGER AUTH. DELETE AFTER TESTING --
     @jwt_required()
     def put(self, amenity_id):
-        """Update an amenity's information"""
+        """Update existing amenity - Admin only"""
+        claims = get_jwt()
+
+        if not claims.get('is_admin', False):
+            return {'error': 'Admin privileges required'}, 403
+
         data = request.get_json()
+        name = data.get('name')
 
         # -- Validation for missing 'name' during update --
-        if not data or 'name' not in data:
-            return {"error": "Name attribute is required to update amenity"}, 400 # -- clearer message for missing 'name' --
+        if not data or name:
+            return {"error": "A name is required to update an amenity"}, 400
 
         # -- Retrieve amenity by ID --
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
             return {"error": "Amenity not found"}, 404
 
-        name = data['name'].strip()
+        name = name.strip()
         if not name:
             return {'error': 'Amenity name cannot be empty'}, 400 # -- Ensure name is not empty for update after stripping --
 
+        # -- Verify valid string input for name --
+        if not isinstance(name, str) or len(name) == 0:
+            return {'error': 'Invalid input: Amenity name must not be empty'}, 400
+
         # -- Update amenity in database --
-        updated_amenity = facade.update_amenity(amenity_id, {"name": data['name']})
+        updated_amenity = facade.update_amenity(amenity_id, {"name": name})
         if not updated_amenity:
             return {"error": "Update failed"}, 400
 
         return {"id": updated_amenity.id, "name": updated_amenity.name}, 200
+
+
+@api.route('/<amenity_id>')
+class AdminAmenityDelete(Resource):
+    @api.response(204, 'Amenity deleted successfully')
+    @api.response(403, 'Admin privileges required')
+    @api.response(404, 'Amenity not found')
+    @api.doc(security='jwt') # --- USED FOR SWAGGER AUTH. DELETE WHEN TESTING IS COMPLETE --
+    @jwt_required()
+    def delete(self, amenity_id):
+        """Delete an amenity - Admin only"""
+        claims = get_jwt()
+
+        if not claims.get('is_admin', False):
+            return {'error': 'Admin privileges required'}, 403
+
+        amenity = facade.get_amenity(amenity_id)
+        if not amenity:
+            return {'error': 'Amenity not found'}, 404
+
+        facade.delete_amenity(amenity_id)
+        return '', 204
