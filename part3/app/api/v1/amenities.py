@@ -37,7 +37,7 @@ class AdminAmenityCreate(Resource):
             return {'error': 'Amenity cannot be empty'}, 400
 
         # -- Check if amenity name already exists --
-        if facade.get_amenity_by_name(name):
+        if facade.get_amenity(name):
             return {'error': 'Amenity already exists'}, 400
         
         # -- Create amenity -- 
