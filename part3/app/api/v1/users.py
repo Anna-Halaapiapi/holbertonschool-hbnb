@@ -35,8 +35,8 @@ class AdminUserCreate(Resource):
     @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
     def post(self):
         """Create a new user - Admin only"""
-        current_user_id = get_jwt_identity() # Get just the ID
-        claims = get_jwt() # Dict containing additional_claims (is_admin)
+       
+       claims = get_jwt() # Dict containing additional_claims (is_admin)
         is_admin = claims.get('is_admin', False) # defaults to False
 
         # -- Check admin privileges --
@@ -69,9 +69,8 @@ class AdminUserCreate(Resource):
     @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
     def get(self):
         """Get list of all users - Admin only"""
-
-        current_user_id = get_jwt_identity()
-        claims = get_jwt()
+       
+       claims = get_jwt()
         is_admin = claims.get('is_admin', False)
 
         if not is_admin:
@@ -98,9 +97,8 @@ class AdminUserModify(Resource):
     @jwt_required()
     def get(self, user_id): 
         """Retrieve user details - Admin can view any user / user can view own details"""
-
-        current_user_id = get_jwt_identity()
-        claims = get_jwt()
+       
+       claims = get_jwt()
         is_admin = claims.get('is_admin', False)
         
         user = facade.get_user(user_id)
@@ -129,7 +127,6 @@ class AdminUserModify(Resource):
     def put(self, user_id):
         """Update user details - Admin can modify any user / users can only modify their own"""
         
-        current_user_id = get_jwt_identity()
         claims = get_jwt()
         is_admin = claims.get('is_admin', False)
 
