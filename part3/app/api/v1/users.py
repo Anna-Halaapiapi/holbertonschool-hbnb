@@ -7,9 +7,6 @@ from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 # User-facing endpoints
 api = Namespace('users', description='User operations')
 
-# Admin-facing endpoints
-# api = Namespace('admin', description='Admin operations')
-
 
 # Define the user model for input validation and documentation
 user_model = api.model('User', {
@@ -27,6 +24,7 @@ user_update_model = api.model('UserUpdate', {
 })
 
 
+
 @api.route('/')
 class AdminUserCreate(Resource): 
     @api.expect(user_model, validate=True)
@@ -37,11 +35,12 @@ class AdminUserCreate(Resource):
     @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
     def post(self):
         """Create a new user - Admin only"""
-        current_user_id = get_jwt_identity() # -- Get just the ID --
-        claims = get_jwt() # -- Dict containing additional_claims (is_admin) -- 
+        current_user_id = get_jwt_identity() # Get just the ID
+        claims = get_jwt() # Dict containing additional_claims (is_admin)
+        is_admin = claims.get('is_admin', False) # defaults to False
 
         # -- Check admin privileges --
-        if not claims.get('is_admin', False):
+        if not is_admin:
             return {'error': 'Admin privileges required'}, 403
 
         user_data = request.json
@@ -58,17 +57,24 @@ class AdminUserCreate(Resource):
         except ValueError as e:
             return {'error': str(e)}, 400
 
-        return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
+        return {
+            'id': new_user.id,
+            'first_name': new_user.first_name,
+            'last_name': new_user.last_name,
+            'email': new_user.email
+        }, 201
     
 
-    @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
     @jwt_required()
+    @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
     def get(self):
         """Get list of all users - Admin only"""
 
-        current_user_id = get_jwt_identity()  # This is a string
-        claims = get_jwt()                    # This is a dict containing additional_claims
-        if not claims.get("is_admin", False):
+        current_user_id = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
+        if not is_admin:
             return {'error': 'Admin privileges required'}, 403
 
         all_users = facade.get_all_users()
@@ -93,15 +99,16 @@ class AdminUserModify(Resource):
     def get(self, user_id): 
         """Retrieve user details - Admin can view any user / user can view own details"""
 
-        current_user_id = get_jwt_identity()  # This is a string
-        claims = get_jwt()                    # This is a dict containing additional_claims
+        current_user_id = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
         
         user = facade.get_user(user_id)
         if not user:
             return {'error': 'User not found'}, 404
 
         # -- Allow admins or the user themselves --
-        if not claims.get('is_admin', False) and str(user_id) != str(current_user_id):
+        if not is_admin and str(user_id) != str(current_user_id):
             return {'error': 'Unauthorized action.'}, 403
 
         return {
@@ -122,9 +129,11 @@ class AdminUserModify(Resource):
     def put(self, user_id):
         """Update user details - Admin can modify any user / users can only modify their own"""
         
-        current_user = get_jwt_identity()
+        current_user_id = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
         data = request.get_json()
-        
         if not data:
             return {'error': 'Invalid input'}, 400
 
@@ -135,7 +144,7 @@ class AdminUserModify(Resource):
 
         # -- ADMIN LOGIC --
 
-        if current_user.get('is_admin', False):
+        if is_admin:
             email = data.get('email')
             if email:
                 existing_user = facade.get_user_by_email(email)
@@ -159,7 +168,7 @@ class AdminUserModify(Resource):
 
         # -- REGULAR USER LOGIC --
 
-        if str(user_id) != str(current_user['id']):
+        if str(user_id) != str(current_user_id):
             return {'error': 'Unauthorized action.'}, 403
 
 
