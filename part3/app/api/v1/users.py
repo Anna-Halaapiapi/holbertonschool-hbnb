@@ -13,8 +13,9 @@ user_model = api.model('User', {
     'password': fields.String(required=True, description='Password (will be securely hashed)')
 })
 
-@api.route('/register')
-class UserRegister(Resource):
+
+@api.route('/')
+class UserList(Resource):
     @api.expect(user_model, validate=True)
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered')
@@ -38,35 +39,36 @@ class UserRegister(Resource):
         return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
 
 
-@api.route('/')
-class UserList(Resource): 
-    @api.expect(user_model, validate=True)
-    @api.response(201, 'User successfully created')
-    @api.response(400, 'Email already registered')
-    @api.response(403, 'Admin privileges required')
-    @jwt_required() # Authentication required
-    def post(self):
-        """Create a new user - Admin only"""
-        current_user = get_jwt_identity()
+# Commenting out create user - admin logic
+# @api.route('/')
+# class UserList(Resource): 
+#     @api.expect(user_model, validate=True)
+#     @api.response(201, 'User successfully created')
+#     @api.response(400, 'Email already registered')
+#     @api.response(403, 'Admin privileges required')
+#     @jwt_required() # Authentication required
+#     def post(self):
+#         """Create a new user - Admin only"""
+#         current_user = get_jwt_identity()
 
-        # Check admin privileges
-        if not current_user.get('is_admin', False):
-            return {'error': 'Admin privileges required'}, 403
+#         # Check admin privileges
+#         if not current_user.get('is_admin', False):
+#             return {'error': 'Admin privileges required'}, 403
 
-        user_data = api.payload
+#         user_data = api.payload
 
-        # Simulate email uniqueness check (to be replaced by real validation with persistence)
-        existing_user = facade.get_user_by_email(user_data['email'])
-        if existing_user:
-            return {'error': 'Email already registered'}, 400
+#         # Simulate email uniqueness check (to be replaced by real validation with persistence)
+#         existing_user = facade.get_user_by_email(user_data['email'])
+#         if existing_user:
+#             return {'error': 'Email already registered'}, 400
 
-        # Create user with hashed password
-        try:
-            new_user = facade.create_user(user_data)
-        except ValueError as e:
-            return {'error': str(e)}, 400
+#         # Create user with hashed password
+#         try:
+#             new_user = facade.create_user(user_data)
+#         except ValueError as e:
+#             return {'error': str(e)}, 400
 
-        return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
+#         return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
     
     def get(self):
         """Get all users"""
