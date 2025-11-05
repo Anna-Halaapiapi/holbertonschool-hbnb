@@ -27,8 +27,10 @@ class Login(Resource):
 
         # Step 3: Create a JWT token
         access_token = create_access_token(
-            identity=str(user.id),
-            additional_claims={"is_admin": user.is_admin}
+            identity={
+                "id": str(user.id), # -- user ID --
+                "is_admin": user.is_admin # -- admin flag --
+            }
         )
         
         # Step 4: Return the JWT token
