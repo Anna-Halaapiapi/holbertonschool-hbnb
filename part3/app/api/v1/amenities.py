@@ -43,7 +43,8 @@ class AdminAmenityCreate(Resource):
         # -- Create amenity -- 
         try:
             # -- verify that data is valid --
-            if not isinstance(name, str) or len(name.strip()) == 0:
+            name = name.strip()
+            if not isinstance(name, str) or len(name) == 0:
                 return {'error': 'Invalid input: Amenity name cannot be empty'}, 400
 
 
@@ -100,7 +101,7 @@ class AdminAmenityResource(Resource):
         name = data.get('name')
 
         # -- Validation for missing 'name' during update --
-        if not data or name:
+        if not name:
             return {"error": "A name is required to update an amenity"}, 400
 
         # -- Retrieve amenity by ID --
@@ -141,6 +142,10 @@ class AdminAmenityDelete(Resource):
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
             return {'error': 'Amenity not found'}, 404
+        
+        try:
+            facade.delete_amenity(amenity_id)
+        except Exception as e:
+            return {'error': str(e)}, 500  # Error handling if deletion fails
 
-        facade.delete_amenity(amenity_id)
         return '', 204
