@@ -14,6 +14,18 @@ def create_app(config_class="config.DevelopmentConfig"):
     bcrypt.init_app(app)
     jwt.init_app(app)
     app.config["SECRET_KEY"] = "your-super-secret-key"
+
+
+    # -- DEV USE ONLY! THIS IS TO ADD JWT AUTHORIZATION BUTTON IN SWAGGER -- 
+     authorizations = {
+        'jwt': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization',
+            'description': "Add 'Bearer ' before your JWT token"
+        }
+    }
+
     api = Api(app, version='1.0', title='HBnB API', description='HBnB Application API', doc='/api/v1/')
 
     # Register the users namespace
