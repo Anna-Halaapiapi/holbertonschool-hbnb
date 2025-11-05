@@ -8,7 +8,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 api = Namespace('users', description='User operations')
 
 # Admin-facing endpoints
-api = Namespace('admin', description='Admin operations')
+# api = Namespace('admin', description='Admin operations')
 
 
 # Define the user model for input validation and documentation
