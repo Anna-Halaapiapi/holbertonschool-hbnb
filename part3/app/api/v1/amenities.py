@@ -24,7 +24,7 @@ class AdminAmenityCreate(Resource):
         """Create a new amenity - Admin only"""
         claims = get_jwt()
 
-        if not claims:
+        if not claims.get('is_admin', False):
             return {'error': 'Admin privileges required'}, 403
         
         # Create amenity
