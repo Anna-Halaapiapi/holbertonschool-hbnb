@@ -58,9 +58,14 @@ class AdminUserCreate(Resource):
 
         return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
 
-
+    @jwt_required()
     def get(self):
-        """Get all users - List of all users"""
+        """Get list of all users - Admin only"""
+
+        current_user = get_jwt_identity()
+        if not current_user.get('is_admin', False):
+            return {'error': 'Admin privileges required'}, 403
+
         all_users = facade.get_all_users()
         return [
             {
@@ -78,11 +83,19 @@ class AdminUserCreate(Resource):
 class AdminUserResource(Resource):
     @api.response(200, 'User details retrieved successfully')
     @api.response(404, 'User not found')
+    @jwt_required()
     def get(self, user_id): 
-        """Retrieve user details - by ID"""
+        """Retrieve user details - Admin can view any user / user can view own details"""
+
+        current_user = get_jwt_identity()
         user = facade.get_user(user_id)
         if not user:
             return {'error': 'User not found'}, 404
+
+        # -- Allow admins or the user themselves --
+        if not current_user.get('is_admin', False) and str(user_id) != str(current_user['id']):
+            return {'error': 'Unauthorized action.'}, 403
+
         return {
             'id': user.id,
             'first_name': user.first_name,
