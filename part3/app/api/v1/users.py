@@ -36,7 +36,7 @@ class AdminUserCreate(Resource):
     def post(self):
         """Create a new user - Admin only"""
        
-       claims = get_jwt() # Dict containing additional_claims (is_admin)
+        claims = get_jwt() # Dict containing additional_claims (is_admin)
         is_admin = claims.get('is_admin', False) # defaults to False
 
         # -- Check admin privileges --
@@ -70,7 +70,7 @@ class AdminUserCreate(Resource):
     def get(self):
         """Get list of all users - Admin only"""
        
-       claims = get_jwt()
+        claims = get_jwt()
         is_admin = claims.get('is_admin', False)
 
         if not is_admin:
@@ -98,7 +98,7 @@ class AdminUserModify(Resource):
     def get(self, user_id): 
         """Retrieve user details - Admin can view any user / user can view own details"""
        
-       claims = get_jwt()
+        claims = get_jwt()
         is_admin = claims.get('is_admin', False)
         
         user = facade.get_user(user_id)
