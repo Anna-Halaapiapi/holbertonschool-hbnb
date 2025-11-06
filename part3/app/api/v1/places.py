@@ -1,3 +1,4 @@
+from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from app.api.v1.reviews import serialize_review
@@ -160,7 +161,9 @@ class AdminPlaceResource(Resource):
     def put(self, place_id):
         """Update a place - Admins can bypass ownership restrictions"""
 
-        user_id, is_admin = get_current_user()
+        user_id = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
 
         try:
             place = facade.get_place(place_id) # get place object by its ID
