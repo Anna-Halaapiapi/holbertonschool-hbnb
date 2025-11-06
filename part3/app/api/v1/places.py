@@ -37,6 +37,16 @@ place_model = api.model('Place', {
     'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
 })
 
+# -- Optional fields for updating a place --
+place_update_model = api.model('PlaceUpdate', {
+    'title': fields.String(required=False, description='Title of the place'),
+    'description': fields.String(description='Description of the place'),
+    'price': fields.Float(required=False, description='Price per night'),
+    'latitude': fields.Float(required=False, description='Latitude of the place'),
+    'longitude': fields.Float(required=False, description='Longitude of the place'),
+    'amenities': fields.List(fields.String, required=False, description="List of amenities ID's")
+})
+
 # -- SERIALIZATION HELPER --
 
 def serialize_place(place):
@@ -151,7 +161,7 @@ class AdminPlaceResource(Resource):
                 return {'error': str(e)}, 404
             return {'error': str(e)}, 400
 
-    @api.expect(place_model, validate=False)
+    @api.expect(place_update_model, validate=True)
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
@@ -175,6 +185,20 @@ class AdminPlaceResource(Resource):
             return {'error': 'Unauthorized action'}, 403
             
         data = request.get_json()
+
+        # -- Merge existing data with updated data --
+
+        current_data = {
+            "title": place.title,
+            "description": place.description,
+            "price": place.price,
+            "latitude": place.latitude,
+            "longitude": place.longitude,
+            "owner_id": place.owner.id,
+            "amenities": [a.id for a in getattr(place, 'amenities', [])]
+        }
+        current_data.update(data)
+
         try:
             updated_place = facade.update_place(place.id, data)
         except ValueError as e:
