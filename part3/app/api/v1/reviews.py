@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
 from app.services import facade
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 api = Namespace('reviews', description='Review operations')
 
@@ -13,6 +13,15 @@ review_model = api.model('Review', {
     'place_id': fields.String(required=True, description='ID of the place')
 })
 
+review_update_model = api.model('Review', {
+    'text': fields.String(required=False, description='Text of the review'),
+    'rating': fields.Integer(required=False, description='Rating of the place (1-5)'),
+    'user_id': fields.String(required=False, description='ID of the user'),
+    'place_id': fields.String(required=False, description='ID of the place')
+})
+
+# -- Serialization Helper --
+
 def serialize_review(review):
     """Function serializes review object"""
     return {
@@ -22,6 +31,8 @@ def serialize_review(review):
         'user_id': review.user.id,
         'place_id': review.place.id
         }
+# --
+
 
 @api.route('/')
 class ReviewList(Resource):
@@ -74,22 +85,29 @@ class ReviewResource(Resource):
             return serialize_review(review), 200
         return {'error': 'Review not found'}, 404
 
-    @api.expect(review_model)
+
+    @api.expect(review_update_model, validate=True)
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
     @api.response(403, 'Unauthorized action.')
-    @jwt_required() # ensure user is authenticated
+    @api.doc(security='jwt') # -- USED FOR TESTING IN SWAGGER. DELETE WHEN TESTING IS COMPLETE --
+    @jwt_required()
     def put(self, review_id):
-        """Update a review's information"""
+        """Update a review - Admins can override ownership"""
+
         review_data = request.json # get review data from HTTP request
         current_user = get_jwt_identity() # get current user's id
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
         review = facade.get_review(review_id) # get existing review object
+        if not review:
+            return {'error': 'Review not found'}, 404
 
-        # Check: user id of review matches the auth'd user
-        if review.user.id != current_user: # return error for mismatch
+        # -- Only allow owner or admin --
+        if review.user.id != current_user and not is_admin:
             return {'error': 'Unauthorized action.'}, 403
-
 
         # -- Validation: Check if rating is within valid range (1-5) --
         rating = review_data.get('rating')
@@ -101,31 +119,34 @@ class ReviewResource(Resource):
         if not text or not text.strip():
             return {'error': 'Review text cannot be empty'}, 400
 
-
         # Update review logic
         updated_review = facade.update_review(review_id, review_data)
-        if updated_review:
-            return serialize_review(updated_review), 200
-        return {'error': 'Review not found'}, 404
+        return serialize_review(updated_review), 200
+
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
     @api.response(403, 'Unauthorized action.')
-    @jwt_required() # ensure user is authenticated
+    @api.doc(security='jwt') # -- USED FOR SWAGGER TESTING. DELETE WHEN COMPLETE --
+    @jwt_required()
     def delete(self, review_id):
-        """Delete a review"""
-        current_user = get_jwt_identity() # get current user's id
-        review = facade.get_review(review_id) # get existing review object by id
+        """Delete review - Admin can bypass ownership"""
 
-        # Check: user id of the review matches the current user's id
-        if review.user.id != current_user: # return error if user did not create the review
+        current_user = get_jwt_identity() # get current user's id
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
+        review = facade.get_review(review_id) # get existing review object by id
+        if not review:
+            return {'error': 'Review not found'}, 404
+
+        # -- Only allow owner or admin --
+        if review.user.id != current_user and not is_admin:
             return {'error': 'Unauthorized action.'}, 403
 
         # delete review logic
         deleted = facade.delete_review(review_id)
-        if deleted:
-            return {'message': 'Review deleted successfully'}, 200
-        return {'error': 'Review not found'}, 404
+        return {'message': 'Review deleted successfully'}, 200
 
 @api.route('/places/<string:place_id>/reviews')
 class PlaceReviewList(Resource):
