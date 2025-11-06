@@ -83,7 +83,7 @@ class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
-    @jwt_required() # ensures user is authenticated (checks user has valid token)
+    @jwt_required() 
     def post(self):
         """Register a new place"""
         try:
@@ -113,9 +113,9 @@ class PlaceList(Resource):
             return {'error': str(e)}, 400
 
 @api.route('/<place_id>')
-class PlaceResource(Resource):
+class AdminPlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
-    @api.response(404, 'Place not found')
+    @api.response(404, 'Place not found')   
     def get(self, place_id):
         """Get place details by ID"""
         try:
@@ -128,34 +128,39 @@ class PlaceResource(Resource):
                 return {'error': str(e)}, 404
             return {'error': str(e)}, 400
 
-    @api.expect(place_model)
+    @api.expect(place_model, validate=False)
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
     @api.response(403, 'Unauthorized action')
+    @api.doc(security='jwt') # -- USED FOR TESTING IN SWAGGER. DELETE WHEN TESTING IS COMPLETE --
     @jwt_required() # ensure user is authenticated
     def put(self, place_id):
-        """Update a place's information"""
-        try:
-            current_user = get_jwt_identity() # get ID of current user
-            place = facade.get_place(place_id) # get place object by its ID
-            if place.owner.id != current_user: # check authenticated user's id matches place owner's id
-                return {'error': 'Unauthorized action'}, 403 # return error if auth'd user is not owner
+        """Update a place's information - Admins Only"""
+
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
+        place = facade.get_place(place_id) # get place object by its ID
+        if not place:
+            return {'error': 'Place not found'}, 404
+
+        if not is_admin:
+            return {'error': 'Unauthorized action'}, 403
             
-
-            # -- Ensure 'reviews' are not passed in payload during update --
-            if 'reviews' in api.payload:
-                del api.payload['reviews']
-
-
-            # Update Place Logic
-            place_data = api.payload
-            updated_place = facade.update_place(place_id, place_data)
-            if updated_place:
-                return serialize_place(updated_place), 200
-            return {'error': 'Place not found'}, 400
+        data = request.get_json()
+        try:
+            updated_place = facade.update_place(place.id, data)
         except ValueError as e:
             return {'error': str(e)}, 400
+
+        return {
+            'id': updated_place.id,
+            'name': updated_place.name,
+            'description': updated_place.description,
+            'owner_id': updated_place.owner_id
+        }, 200
+
 
 @api.route('/<string:place_id>/reviews')
 class PlaceReviewList(Resource):
