@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from app.api.v1.reviews import serialize_review
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 api = Namespace('places', description='Place operations')
 
@@ -81,30 +81,35 @@ def serialize_place(place):
     }
 
 
-# -- Helper to get user info --
-
-def get_current_user():
-    """Return user_id and is_admin from JWT"""
-
-    user_id = get_jwt_identity()
-    claims = get_jwt()
-    is_admin = claims.get('is_admin', False)
-    return user_id, is_admin
-
 
 @api.route('/')
 class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
+    @api.doc(security='jwt')
     @jwt_required() 
     def post(self):
         """Register a new place"""
 
+        user_id = get_jwt_identity()
+
         try:
-            current_user = get_jwt_identity() # get user ID from token
             place_data = api.payload
             place_data['owner_id'] = user_id  # -- Use JWT user ID
+
+            if 'amenities' in place_data:
+                amenities_input = []
+                for item in place_data['amenities']:
+                    # -- If it looks like an ID (UUID), skip lookup --
+                    if '-' in item:
+                        amenities_input.append(item)
+                    else:
+                        amenity = facade.get_amenity_by_name(item)
+                        if not amenity:
+                            return {'error': f"Amenity with name '{item}' not found"}, 400
+                        amenities_input.append(amenity['id'])
+                place_data['amenities'] = amenities_input
             
 
             # -- Ensure 'reviews' are not passed in payload --
