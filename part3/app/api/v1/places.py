@@ -32,9 +32,11 @@ place_model = api.model('Place', {
     'price': fields.Float(required=True, description='Price per night'),
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
-    'owner_id': fields.String(required=True, description='ID of the owner'),
+    #'owner_id': fields.String(required=True, description='ID of the owner'), # --- USE JWT ID INSTEAD --
     'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
 })
+
+# -- SERIALIZATION HELPER --
 
 def serialize_place(place):
     """Function serializes place object"""
@@ -78,6 +80,18 @@ def serialize_place(place):
         'reviews': reviews_list # -- Nested reviews data (unchanged) --
     }
 
+
+# -- Helper to get user info --
+
+def get_current_user():
+    """Return user_id and is_admin from JWT"""
+
+    user_id = get_jwt_identity()
+    claims = get_jwt()
+    is_admin = claims.get('is_admin', False)
+    return user_id, is_admin
+
+
 @api.route('/')
 class PlaceList(Resource):
     @api.expect(place_model)
@@ -86,10 +100,11 @@ class PlaceList(Resource):
     @jwt_required() 
     def post(self):
         """Register a new place"""
+
         try:
             current_user = get_jwt_identity() # get user ID from token
             place_data = api.payload
-            place_data['owner_id'] = current_user # set owner_id to ID of the authenticated user
+            place_data['owner_id'] = user_id  # -- Use JWT user ID
             
 
             # -- Ensure 'reviews' are not passed in payload --
@@ -106,6 +121,7 @@ class PlaceList(Resource):
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
         """Retrieve a list of all places"""
+
         try:
             places = facade.get_all_places()
             return [serialize_place(place) for place in places], 200
@@ -118,6 +134,7 @@ class AdminPlaceResource(Resource):
     @api.response(404, 'Place not found')   
     def get(self, place_id):
         """Get place details by ID """
+
         try:
             place = facade.get_place(place_id)
             if place is None:
@@ -138,9 +155,7 @@ class AdminPlaceResource(Resource):
     def put(self, place_id):
         """Update a place - Admins can bypass ownership restrictions"""
 
-        claims = get_jwt()
-        is_admin = claims.get('is_admin', False)
-        user_id = claims.get('id') # -- authenticated user ID
+        user_id, is_admin = get_current_user()
 
         try:
             place = facade.get_place(place_id) # get place object by its ID
@@ -160,12 +175,11 @@ class AdminPlaceResource(Resource):
         return serialize_place(updated_place), 200
 
     @jwt_required()
+    @api.doc(security='jwt')
     def delete(self, place_id):
         """ Delete a place - Admin can bypass ownership restrictions"""
         
-        claims = get_jwt()
-        is_admin = claims.get('is_admin', False)
-        user_id = claims.get('id')
+        user_id, is_admin = get_current_user()
 
         try:
             place = facade.get_place(place_id)
