@@ -37,7 +37,7 @@ place_model = api.model('Place', {
     'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
 })
 
-# -- Optional fields for updating a place --
+# -- Non-required fields for updating a place --
 place_update_model = api.model('PlaceUpdate', {
     'title': fields.String(required=False, description='Title of the place'),
     'description': fields.String(description='Description of the place'),
@@ -167,28 +167,29 @@ class AdminPlaceResource(Resource):
     @api.response(400, 'Invalid input data')
     @api.response(403, 'Unauthorized action')
     @api.doc(security='jwt') # -- USED FOR TESTING IN SWAGGER. DELETE WHEN TESTING IS COMPLETE --
-    @jwt_required() # ensure user is authenticated
+    @jwt_required()
     def put(self, place_id):
-        """Update a place - Admins can bypass ownership restrictions"""
+        """Update a place - Admins can override ownership"""
 
+        # -- Get current user info --
         user_id = get_jwt_identity()
         claims = get_jwt()
         is_admin = claims.get('is_admin', False)
 
-        try:
-            place = facade.get_place(place_id) # get place object by its ID
-        except ValueError:
+        # -- Get place object --
+        place = facade.get_place(place_id)
+        if not place:
             return {'error': 'Place not found'}, 404
 
-        # -- ownership check: only admin or owner can update --
+        # -- Check owner: only owner or admin --
         if not is_admin and place.owner.id != user_id:
             return {'error': 'Unauthorized action'}, 403
             
-        data = request.get_json()
+        # -- Get update data from request --
+        data = api.payload
 
-        # -- Merge existing data with updated data --
-
-        current_data = {
+        # -- Merge current place data with new data --
+        updated_data = {
             "title": place.title,
             "description": place.description,
             "price": place.price,
@@ -197,8 +198,13 @@ class AdminPlaceResource(Resource):
             "owner_id": place.owner.id,
             "amenities": [a.id for a in getattr(place, 'amenities', [])]
         }
-        current_data.update(data)
 
+        # update only fields provided
+        for key, value in data.items():
+            if value is not None:
+                updated_data[key] = value
+
+        # -- Update place via the facade
         try:
             updated_place = facade.update_place(place.id, data)
         except ValueError as e:
