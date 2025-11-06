@@ -159,6 +159,12 @@ class HBnBFacade:
             return None
         return {"id": amenity.id, "name": amenity.name}
 
+    def get_amenity_by_name(self, name):
+        amenities = self.amenity_repo.get_all()
+        for amenity in amenities:
+            if amenity.name.lower() == name.lower():
+                return {'id': amenity.id, 'name': amenity.name}
+
     def get_all_amenities(self):
         amenities = self.amenity_repo.get_all()
         return [{"id": a.id, "name": a.name} for a in amenities]
