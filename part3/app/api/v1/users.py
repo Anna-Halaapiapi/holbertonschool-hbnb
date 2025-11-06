@@ -162,7 +162,7 @@ class AdminUserModify(Resource):
                 'email': updated_user.email
             }, 200
 
-
+"""
         # -- REGULAR USER LOGIC --
 
         if str(user_id) != str(current_user_id):
@@ -193,3 +193,4 @@ class AdminUserModify(Resource):
             'first_name': updated_user.first_name,
             'last_name': updated_user.last_name
         }, 200
+"""
