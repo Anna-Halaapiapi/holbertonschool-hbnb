@@ -35,7 +35,8 @@ class AdminUserCreate(Resource):
     @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
     def post(self):
         """Create a new user - Admin only"""
-       
+        
+        id = get_jwt_identity() 
         claims = get_jwt() # Dict containing additional_claims (is_admin)
         is_admin = claims.get('is_admin', False) # defaults to False
 
