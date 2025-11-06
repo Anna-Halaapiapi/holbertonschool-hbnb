@@ -31,15 +31,14 @@ def serialize_review(review):
         'user_id': review.user.id,
         'place_id': review.place.id
         }
-# --
-
 
 @api.route('/')
 class ReviewList(Resource):
     @api.expect(review_model, validate=True)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
-    @jwt_required() # ensure user is authenticated
+    @api.doc(security='jwt') # -- USED FOR SWAGGER TESTING. DELETE WHEN COMPLETED --
+    @jwt_required()
     def post(self):
         """Register a new review""" 
         try:
