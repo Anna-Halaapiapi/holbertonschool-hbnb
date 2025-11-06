@@ -117,7 +117,7 @@ class AdminPlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
     @api.response(404, 'Place not found')   
     def get(self, place_id):
-        """Get place details by ID"""
+        """Get place details by ID """
         try:
             place = facade.get_place(place_id)
             if place is None:
@@ -136,16 +136,19 @@ class AdminPlaceResource(Resource):
     @api.doc(security='jwt') # -- USED FOR TESTING IN SWAGGER. DELETE WHEN TESTING IS COMPLETE --
     @jwt_required() # ensure user is authenticated
     def put(self, place_id):
-        """Update a place's information - Admins Only"""
+        """Update a place - Admins can bypass ownership restrictions"""
 
         claims = get_jwt()
         is_admin = claims.get('is_admin', False)
+        user_id = claims.get('id') # -- authenticated user ID
 
-        place = facade.get_place(place_id) # get place object by its ID
-        if not place:
+        try:
+            place = facade.get_place(place_id) # get place object by its ID
+        except ValueError:
             return {'error': 'Place not found'}, 404
 
-        if not is_admin:
+        # -- ownership check: only admin or owner can update --
+        if not is_admin and place.owner.id != user_id:
             return {'error': 'Unauthorized action'}, 403
             
         data = request.get_json()
@@ -154,12 +157,30 @@ class AdminPlaceResource(Resource):
         except ValueError as e:
             return {'error': str(e)}, 400
 
-        return {
-            'id': updated_place.id,
-            'name': updated_place.name,
-            'description': updated_place.description,
-            'owner_id': updated_place.owner_id
-        }, 200
+        return serialize_place(updated_place), 200
+
+    @jwt_required()
+    def delete(self, place_id):
+        """ Delete a place - Admin can bypass ownership restrictions"""
+        
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+        user_id = claims.get('id')
+
+        try:
+            place = facade.get_place(place_id)
+        except ValueError:
+            return {'error': 'Place not found'}, 404
+
+        if not is_admin and place.owner.id != user_id:
+            return {'error': 'Unauthorized action'}, 403
+
+        try:
+            facade.place_repo.delete(place_id)
+        except ValueError as e:
+            return {'error': str(e)}, 400
+
+        return {'message': f'Place {place_id} deleted successfully'}, 200
 
 
 @api.route('/<string:place_id>/reviews')
