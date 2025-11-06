@@ -209,12 +209,13 @@ class AdminPlaceResource(Resource):
     @api.doc(security='jwt')
     def delete(self, place_id):
         """ Delete a place - Admin can bypass ownership restrictions"""
-        
-        user_id, is_admin = get_current_user()
 
-        try:
-            place = facade.get_place(place_id)
-        except ValueError:
+        user_id = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+        
+        place = facade.get_place(place_id)
+        if not place:
             return {'error': 'Place not found'}, 404
 
         if not is_admin and place.owner.id != user_id:
