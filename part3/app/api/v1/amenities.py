@@ -124,28 +124,3 @@ class AdminAmenityResource(Resource):
 
         return {"id": updated_amenity.id, "name": updated_amenity.name}, 200
 
-
-@api.route('/<amenity_id>')
-class AdminAmenityDelete(Resource):
-    @api.response(204, 'Amenity deleted successfully')
-    @api.response(403, 'Admin privileges required')
-    @api.response(404, 'Amenity not found')
-    @api.doc(security='jwt') # --- USED FOR SWAGGER AUTH. DELETE WHEN TESTING IS COMPLETE --
-    @jwt_required()
-    def delete(self, amenity_id):
-        """Delete an amenity - Admin only"""
-        claims = get_jwt()
-
-        if not claims.get('is_admin', False):
-            return {'error': 'Admin privileges required'}, 403
-
-        amenity = facade.get_amenity(amenity_id)
-        if not amenity:
-            return {'error': 'Amenity not found'}, 404
-        
-        try:
-            facade.delete_amenity(amenity_id)
-        except Exception as e:
-            return {'error': str(e)}, 500  # Error handling if deletion fails
-
-        return '', 204
