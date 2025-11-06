@@ -66,8 +66,7 @@ class AdminAmenityCreate(Resource):
         # amenities = facade.get_all_amenities()
         # return {"amenities": amenities}, 200
         amenities = facade.get_all_amenities()
-        return [{'id': a.id, 'name': a.name} for a in amenities], 200
-
+        return amenities, 200
 
 
 @api.route('/<amenity_id>')
