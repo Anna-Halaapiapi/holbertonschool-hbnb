@@ -199,14 +199,26 @@ class AdminPlaceResource(Resource):
             "amenities": [a.id for a in getattr(place, 'amenities', [])]
         }
 
-        # update only fields provided
-        for key, value in data.items():
-            if value is not None:
-                updated_data[key] = value
+        updated_data.update(data)
 
+        # convert amenity ID to objects
+        if 'amenities' in updated_data:
+            amenity_objects = []
+            for name_or_id in updated_data['amenities']:
+                # Try to get by ID first
+                amenity = facade.amenity_repo.get(name_or_id)
+                if not amenity:
+                    # Try to get by name if ID not found
+                    amenity_info = facade.get_amenity_by_name(name_or_id)
+                    if not amenity_info:
+                        return {'error': f"Amenity '{name_or_id}' not found"}, 400
+                    amenity = facade.amenity_repo.get(amenity_info['id'])
+                amenity_objects.append(amenity)
+            updated_data['amenities'] = amenity_objects
+        
         # -- Update place via the facade
         try:
-            updated_place = facade.update_place(place.id, data)
+            updated_place = facade.update_place(place.id, updated_data)
         except ValueError as e:
             return {'error': str(e)}, 400
 
