@@ -53,8 +53,8 @@ class AdminAmenityCreate(Resource):
             return {'error': str(e)}, 400
 
         return {
-            'id': new_amenity.id,
-            'name': new_amenity.name
+            'id': new_amenity.get('id'),
+            'name': new_amenity.get('name')
         }, 201
         
 
