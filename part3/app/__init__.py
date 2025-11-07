@@ -2,6 +2,7 @@ from flask import Flask
 from flask_restx import Api
 from app.extensions import bcrypt, jwt, db
 
+
 def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -9,17 +10,21 @@ def create_app(config_class="config.DevelopmentConfig"):
     jwt.init_app(app)
     db.init_app(app)
     app.config["SECRET_KEY"] = "your-super-secret-key"
+    with app.app_context():
+        db
+    #with app.app_context():
+        #db.create_all()
 
 
     # -- DEV USE ONLY! THIS IS TO ADD JWT AUTHORIZATION BUTTON IN SWAGGER -- 
-    authorizations = {
-        'jwt': {
-            'type': 'apiKey',
-            'in': 'header',
-            'name': 'Authorization',
-            'description': "Add 'Bearer ' before your JWT token"
-        }
-    }
+    #authorizations = {
+    #    'jwt': {
+    #        'type': 'apiKey',
+    #        'in': 'header',
+    #        'name': 'Authorization',
+     #       'description': "Add 'Bearer ' before your JWT token"
+     #   }
+    #}
 
     api = Api(
         app,
@@ -27,7 +32,7 @@ def create_app(config_class="config.DevelopmentConfig"):
         title='HBnB API',
         description='HBnB Application API',
         doc='/api/v1/',
-        authorizations=authorizations # -- TO DELETE AFTER TESTING --
+        # authorizations=authorizations # -- TO DELETE AFTER TESTING --
     )
     # move import block here to avoid circular import
     from app.api.v1.users import api as users_ns
