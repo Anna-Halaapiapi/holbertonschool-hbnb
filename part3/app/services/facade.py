@@ -19,8 +19,6 @@ class HBnBFacade:
         self.review_repo = SQLAlchemyRepository(Review)
         self.amenity_repo = SQLAlchemyRepository(Amenity)
 
-        # -- Bootstrap Admin for testing --
-        self.bootstrap_admin()
 
     # Placeholder method for creating a user
     def create_user(self, user_data):
