@@ -6,6 +6,7 @@ from app.models.place import Place
 from app.models.review import Review
 from app.models.amenity import Amenity
 
+
 class HBnBFacade:
     def __init__(self):
         # REPLACING INMEMREPO WITH SQLALCHEMYREPO
@@ -182,16 +183,28 @@ class HBnBFacade:
         amenity.name = amenity_data.get("name", amenity.name)
         return amenity
 
-    # -- BOOTSTRAP METHOD FOR ADMIN - IN-MEMORY --
-    def bootstrap_admin(self):
-        """Create a default admin user for testing"""
+    # -- BOOTSTRAP METHOD FOR ADMIN --
+    from app import create_app, db
+    from app.extensions import bcrypt
+    from app.models.user import User
 
-        if not self.get_user_by_email("admin@example.com"):
-            admin_user = User(
-                first_name="Super",
-                last_name="Admin",
-                email="admin@example.com",
-                password="adminpassword",
-                is_admin=True
-            )
-            self.user_repo.add(admin_user)
+    def bootstrap_admin():
+        app = create_app()
+        with app.app_context():
+            admin = User.query.filter_by(username='admin').first()
+            if not admin:
+                print("No admin found, creating one...")
+                password_hash = bcrypt.generate_password_hash('adminpassword').decode('utf-8')
+
+                admin = User(
+                        username='admin',
+                        email='admin@example.com',
+                        password=password_hash,
+                        is_admin=True
+                )
+                db.session.add(admin)
+                db.session.commit()
+
+                print("Admin user created successfully!")
+            else:
+                print("Admin already exists — skipping creation.")
