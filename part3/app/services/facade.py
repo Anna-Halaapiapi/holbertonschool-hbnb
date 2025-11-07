@@ -184,22 +184,22 @@ class HBnBFacade:
         return amenity
 
     # -- BOOTSTRAP METHOD FOR ADMIN --
-    from app import create_app, db
-    from app.extensions import bcrypt
+    from app import create_app
     from app.models.user import User
+    from app.extensions import db
 
     def bootstrap_admin():
         app = create_app()
         with app.app_context():
-            admin = User.query.filter_by(username='admin').first()
+            admin = User.query.filter_by(email='admin@example.com').first()
             if not admin:
                 print("No admin found, creating one...")
-                password_hash = bcrypt.generate_password_hash('adminpassword').decode('utf-8')
 
                 admin = User(
-                        username='admin',
+                        first_name='Super',
+                        last_name='Admin',
                         email='admin@example.com',
-                        password=password_hash,
+                        password='adminpassword',
                         is_admin=True
                 )
                 db.session.add(admin)
