@@ -9,11 +9,12 @@ def create_app(config_class="config.DevelopmentConfig"):
     bcrypt.init_app(app)
     jwt.init_app(app)
     db.init_app(app)
-    app.config["SECRET_KEY"] = "your-super-secret-key"
+    
+    if not app.config.get("SECRET_KEY"):
+        app.config["SECRET_KEY"] = "your-super-secret-key"
+
     with app.app_context():
-        db
-    #with app.app_context():
-        #db.create_all()
+        db.create_all()
 
 
     # -- DEV USE ONLY! THIS IS TO ADD JWT AUTHORIZATION BUTTON IN SWAGGER -- 
@@ -22,8 +23,8 @@ def create_app(config_class="config.DevelopmentConfig"):
     #        'type': 'apiKey',
     #        'in': 'header',
     #        'name': 'Authorization',
-     #       'description': "Add 'Bearer ' before your JWT token"
-     #   }
+    #       'description': "Add 'Bearer ' before your JWT token"
+    #   }
     #}
 
     api = Api(
@@ -51,6 +52,4 @@ def create_app(config_class="config.DevelopmentConfig"):
     api.add_namespace(reviews_ns, path="/api/v1/reviews")
     # Register auth namespace
     api.add_namespace(auth_ns, path='/api/v1/auth')
-    # Register admin namespace -- TO BE DELETED --
-    # api.add_namespace(admin_api, path='/api/v1/admin')
     return app
