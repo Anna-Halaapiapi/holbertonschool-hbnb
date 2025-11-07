@@ -1,5 +1,6 @@
 from .base_model import BaseModel
 from app.extensions import bcrypt
+from app.extensions import db
 import re  # used for matching strings based on patterns
 
 class User(BaseModel):
@@ -8,7 +9,14 @@ class User(BaseModel):
     'existing_emails' is used to simulate email constraints and should be changed when implementing
     the actual database - where it is enforced by the DB layer instead.
     """
+    __tablename__ = 'users'
 
+    first_name = db.Column("first_name", db.String(50), nullable=False)
+    last_name = db.Column("last_name", db.String(50), nullable=False)
+    email = db.Column("email", db.String(120), nullable=False, unique=True)
+    password = db.Column("password", db.String(128), nullable=False)
+    is_admin = db.Column("is_admin", db.Boolean, default=False)
+    
     existing_emails = set()
 
     def __init__(self, first_name, last_name, email, password=None, is_admin=False):
