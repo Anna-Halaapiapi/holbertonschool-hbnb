@@ -7,44 +7,52 @@ This version features a persistent database, a complete authentication and autho
 ## 📁 Project Blueprint
 
 ```
-HOLBERTONSCHOOL-HBNB/
-├── app/
-│   ├── __init__.py         
-│   ├── api/                # Presentation Layer (API Endpoints)
-│   │   ├── __init__.py
-│   │   └── v1/
-│   │       ├── __init__.py
-│   │       ├── amenities.py
-│   │       ├── auth.py
-│   │       ├── places.py
-│   │       ├── reviews.py
-│   │       └── users.py
-│   ├── models/             # Business Logic Layer (Data Models)
-│   │   ├── __init__.py
-│   │   ├── tests/          # Unit tests for models
-│   │   │   ├── amenity_test.py
-│   │   │   ├── place_test.py
-│   │   │   └── user_test.py
-│   │   ├── amenity.py
-│   │   ├── base_model.py
-│   │   ├── place.py
-│   │   ├── review.py
-│   │   └── user.py
-│   ├── persistence/        # Persistence Layer
-│   │   ├── __init__.py
-│   │   └── repository.py
-│   ├── services/           # Business Logic Layer (Operations)
-│   │   ├── __init__.py
-│   │   └── facade.py
-│   └── extensions.py       # Flask extensions (Bcrypt, JWT)
-├── tests/                  # Integration/API tests
-│   ├── test_endpoints.py
-│   └── user-endpoint-testing.md
-├── .gitignore
-├── config.py               # Configuration file
-├── README.md
-├── requirements.txt        # Project dependencies
-└── run.py                  # Entry point to run the application
+holbertonschool-hbnb/
+├── part1/                      
+├── part2/                      
+├── part3/                      # Database-backed API with JWT and role-based access
+│   ├── app/
+│   │   ├── __init__.py         # Flask app factory
+│   │   ├── api/
+│   │   │   └── v1/
+│   │   │       ├── __init__.py
+│   │   │       ├── amenities.py
+│   │   │       ├── auth.py
+│   │   │       ├── places.py
+│   │   │       ├── reviews.py
+│   │   │       └── users.py
+│   │   ├── models/
+│   │   │   ├── __init__.py
+│   │   │   ├── amenity.py
+│   │   │   ├── base_model.py
+│   │   │   ├── place.py
+│   │   │   ├── review.py
+│   │   │   └── user.py
+│   │   │   └── model_tests/
+│   │   │       ├── __init__.py
+│   │   │       ├── amenity_test.py
+│   │   │       ├── place_test.py
+│   │   │       └── user_test.py
+│   │   ├── persistence/
+│   │   │   ├── __init__.py
+│   │   │   └── repository.py
+│   │   ├── services/
+│   │   │   ├── __init__.py
+│   │   │   ├── facade.py
+│   │   │   └── extensions.py
+│   ├── config.py               # App and DB configuration
+│   ├── initial_data.sql        # Sample data for DB seeding
+│   ├── tables.sql              # SQL schema definition
+│   ├── requirements.txt        # Project dependencies
+│   ├── run.py                  # App entry point
+│   ├── README.md               # Project documentation
+│   ├── ER_Diagrams.png         # Mermaid-generated schema diagram
+│   └── tests/
+│       ├── part2/              # Legacy tests from part 2
+│       ├── part3/              # Tests for JWT, DB, and relationships
+│       ├── task3_endpoint_testing.md
+│       └── task9_sqlscript_testing.md
+
 ```
 
 ## 🚀 Key Features
