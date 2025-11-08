@@ -5,6 +5,8 @@ from app.models.user import User
 from app.models.place import Place
 from app.models.review import Review
 from app.models.amenity import Amenity
+from app import create_app
+from app.extensions import db, bcrypt
 
 
 class HBnBFacade:
@@ -186,25 +188,25 @@ class HBnBFacade:
     # -- BOOTSTRAP METHOD FOR ADMIN --
     from app import create_app
     from app.models.user import User
-    from app.extensions import db
 
-    def bootstrap_admin():
-        app = create_app()
-        with app.app_context():
-            admin = User.query.filter_by(email='admin@example.com').first()
-            if not admin:
-                print("No admin found, creating one...")
+def bootstrap_admin():
+    app = create_app()
+    with app.app_context():
+        admin = User.query.filter_by(email='admin@example.com').first()
+        if not admin:
+            print("No admin found, creating one...")
+            password_hash = bcrypt.generate_password_hash('adminpassword').decode('utf-8')
 
-                admin = User(
-                        first_name='Super',
-                        last_name='Admin',
-                        email='admin@example.com',
-                        password='adminpassword',
-                        is_admin=True
-                )
-                db.session.add(admin)
-                db.session.commit()
+            admin = User(
+                    first_name='Super',
+                    last_name='Admin',
+                    email='admin@example.com',
+                    password=password_hash,
+                    is_admin=True
+            )
+            db.session.add(admin)
+            db.session.commit()
 
-                print("Admin user created successfully!")
-            else:
-                print("Admin already exists — skipping creation.")
+            print("Admin user created successfully!")
+        else:
+            print("Admin already exists — skipping creation.")

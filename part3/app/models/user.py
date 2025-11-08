@@ -11,9 +11,9 @@ class User(BaseModel):
     """
     __tablename__ = 'users'
 
-    first_name = db.Column("first_name", db.String(50), nullable=False)
-    last_name = db.Column("last_name", db.String(50), nullable=False)
-    email = db.Column("email", db.String(120), nullable=False, unique=True)
+    _first_name = db.Column("first_name", db.String(50), nullable=False)
+    _last_name = db.Column("last_name", db.String(50), nullable=False)
+    _email = db.Column("email", db.String(120), nullable=False, unique=True)
     password = db.Column("password", db.String(128), nullable=False)
     is_admin = db.Column("is_admin", db.Boolean, default=False)
     

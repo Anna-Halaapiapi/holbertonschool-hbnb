@@ -79,7 +79,7 @@ class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
-    @api.doc(security='jwt')
+    #@api.doc(security='jwt')
     @jwt_required() 
     def post(self):
         """Register a new place"""
@@ -147,7 +147,7 @@ class AdminPlaceResource(Resource):
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
     @api.response(403, 'Unauthorized action')
-    @api.doc(security='jwt') # -- USED FOR TESTING IN SWAGGER. DELETE WHEN TESTING IS COMPLETE --
+    #@api.doc(security='jwt') # -- USED FOR TESTING IN SWAGGER. DELETE WHEN TESTING IS COMPLETE --
     @jwt_required()
     def put(self, place_id):
         """Update a place - Admins can override ownership"""
@@ -206,7 +206,7 @@ class AdminPlaceResource(Resource):
         return serialize_place(updated_place), 200
 
     @jwt_required()
-    @api.doc(security='jwt')
+    #@api.doc(security='jwt')
     def delete(self, place_id):
         """ Delete a place - Admin can bypass ownership restrictions"""
 

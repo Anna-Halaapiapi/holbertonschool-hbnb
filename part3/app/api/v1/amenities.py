@@ -18,7 +18,7 @@ class AdminAmenityCreate(Resource):
     @api.response(201, 'Amenity successfully created')
     @api.response(400, 'Amenity already exists or invalid input')
     @api.response(403, 'Admin privileges required')
-    @api.doc(security='jwt') # -- USER FOR SWAGGER AUTH. DELETE WHEN TESTING IS COMPLETE --
+    #@api.doc(security='jwt') # -- USER FOR SWAGGER AUTH. DELETE WHEN TESTING IS COMPLETE --
     @jwt_required()
     def post(self):
         """Create a new amenity - Admin only"""
@@ -87,7 +87,7 @@ class AdminAmenityResource(Resource):
     @api.response(400, 'Invalid input data or name cannot be empty')
     @api.response(403, 'Admin privileges required')
     @api.response(404, 'Amenity not found')
-    @api.doc(security='jwt') # -- USED FOR SWAGGER AUTH. DELETE AFTER TESTING --
+    #@api.doc(security='jwt') # -- USED FOR SWAGGER AUTH. DELETE AFTER TESTING --
     @jwt_required()
     def put(self, amenity_id):
         """Update existing amenity - Admin only"""

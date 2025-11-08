@@ -2,6 +2,7 @@ from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from app.services import facade
 from flask import request
+from app.models.user import User as user_v
 
 api = Namespace('auth', description='Authentication operations')
 
@@ -22,7 +23,7 @@ class Login(Resource):
         user = facade.get_user_by_email(credentials['email'])
         
         # Step 2: Check if user exists and password is correct
-        if not user or not user.verify_password(credentials['password']):
+        if not user or not user_v.verify_password(credentials['password']):
             return {'error': 'Invalid credentials'}, 401
 
         # Step 3: Create a JWT token
