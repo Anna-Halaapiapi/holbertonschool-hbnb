@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from app.models.user import User
+from app.models.review import Review
 from app.extensions import db
 
 class Repository(ABC):
@@ -63,6 +64,14 @@ class UserRepository(SQLAlchemyRepository):
 
     def get_user_by_email(self, email):
         return self.model.query.filter_by(email=email).first()
+
+# Review repository for sqlalchemy 
+#class ReviewRepository(SQLAlchemyRepository):
+    #def __init__(self):
+        #super().__init__(Review)
+
+    #def get_review_by_place(self, place_id):
+        #return self.model.query.filter_by(place_id=place_id).first()
 
 # REPLACING INMEMREPO WITH SQLALCHEMYREPO
 # class InMemoryRepository(Repository):
