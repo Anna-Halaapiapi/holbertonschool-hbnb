@@ -37,7 +37,7 @@ class ReviewList(Resource):
     @api.expect(review_model, validate=True)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
-    @api.doc(security='jwt') # -- USED FOR SWAGGER TESTING. DELETE WHEN COMPLETED --
+    # @api.doc(security='jwt') # -- USED FOR SWAGGER TESTING. DELETE WHEN COMPLETED --
     @jwt_required()
     def post(self):
         """Register a new review""" 
@@ -90,7 +90,7 @@ class ReviewResource(Resource):
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
     @api.response(403, 'Unauthorized action.')
-    @api.doc(security='jwt') # -- USED FOR TESTING IN SWAGGER. DELETE WHEN TESTING IS COMPLETE --
+    # @api.doc(security='jwt') # -- USED FOR TESTING IN SWAGGER. DELETE WHEN TESTING IS COMPLETE --
     @jwt_required()
     def put(self, review_id):
         """Update a review - Admins can override ownership"""
@@ -126,7 +126,7 @@ class ReviewResource(Resource):
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
     @api.response(403, 'Unauthorized action.')
-    @api.doc(security='jwt') # -- USED FOR SWAGGER TESTING. DELETE WHEN COMPLETE --
+    # @api.doc(security='jwt') # -- USED FOR SWAGGER TESTING. DELETE WHEN COMPLETE --
     @jwt_required()
     def delete(self, review_id):
         """Delete review - Admin can bypass ownership"""

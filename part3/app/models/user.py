@@ -1,6 +1,7 @@
 from .base_model import BaseModel
 from app.extensions import bcrypt
 from app.extensions import db
+from sqlalchemy.ext.hybrid import hybrid_property
 import re  # used for matching strings based on patterns
 
 class User(BaseModel):
@@ -11,9 +12,9 @@ class User(BaseModel):
     """
     __tablename__ = 'users'
 
-    first_name = db.Column("first_name", db.String(50), nullable=False)
-    last_name = db.Column("last_name", db.String(50), nullable=False)
-    email = db.Column("email", db.String(120), nullable=False, unique=True)
+    _first_name = db.Column("first_name", db.String(50), nullable=False)
+    _last_name = db.Column("last_name", db.String(50), nullable=False)
+    _email = db.Column("email", db.String(120), nullable=False, unique=True)
     password = db.Column("password", db.String(128), nullable=False)
     is_admin = db.Column("is_admin", db.Boolean, default=False)
     
@@ -38,7 +39,7 @@ class User(BaseModel):
 
 
     # -- First name --
-    @property
+    @hybrid_property
     def first_name(self):
         return self._first_name
 
@@ -49,10 +50,14 @@ class User(BaseModel):
         if len(value) > 50:
             raise ValueError("First name must be less than 50 characters.")
         self._first_name = value.strip()
+    
+    @first_name.expression
+    def first_name(cls):
+        return cls._first_name
 
 
     # -- Last name --
-    @property
+    @hybrid_property
     def last_name(self):
         return self._last_name
 
@@ -63,10 +68,14 @@ class User(BaseModel):
         if len(value) > 50:
             raise ValueError("Last name must be less than 50 characters.")
         self._last_name = value.strip()
+    
+    @last_name.expression
+    def last_name(cls):
+        return cls._last_name
 
 
     # -- Email --
-    @property
+    @hybrid_property
     def email(self):
         return self._email
 
@@ -82,6 +91,10 @@ class User(BaseModel):
             raise ValueError("A valid email address is required")
 
         self._email = email_clean
+    
+    @email.expression
+    def email(cls):
+        return cls._email
 
 
     # -- Validation Helper --

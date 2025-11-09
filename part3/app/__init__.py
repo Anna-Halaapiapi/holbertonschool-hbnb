@@ -14,6 +14,14 @@ def create_app(config_class="config.DevelopmentConfig"):
         app.config["SECRET_KEY"] = "your-super-secret-key"
 
     with app.app_context():
+
+        # -- import modules before creating db --
+        from app.models.user import User
+        from app.models.place import Place
+        from app.models.review import Review
+        from app.models.amenity import Amenity
+
+        # -- create tablles for imported models --
         db.create_all()
 
 
@@ -52,4 +60,5 @@ def create_app(config_class="config.DevelopmentConfig"):
     api.add_namespace(reviews_ns, path="/api/v1/reviews")
     # Register auth namespace
     api.add_namespace(auth_ns, path='/api/v1/auth')
+
     return app

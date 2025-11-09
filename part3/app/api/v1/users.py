@@ -32,7 +32,7 @@ class AdminUserCreate(Resource):
     @api.response(400, 'Email already registered')
     @api.response(403, 'Admin privileges required')
     @jwt_required()
-    @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
+    # @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
     def post(self):
         """Create a new user - Admin only"""
         
@@ -66,7 +66,7 @@ class AdminUserCreate(Resource):
     
 
     @jwt_required()
-    @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
+    # @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
     def get(self):
         """Get list of all users - Admin only"""
        
@@ -122,7 +122,7 @@ class AdminUserModify(Resource):
     @api.response(400, 'Invalid input or email already in use')
     @api.response(403, 'Unauthorized action.')
     @api.response(404, 'User not found')
-    @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
+    # @api.doc(security='jwt') # -- LINE TO BE DELETED AFTER TESTING --
     @jwt_required()
     def put(self, user_id):
         """Update user details - Admin can modify any user / users can only modify their own"""
