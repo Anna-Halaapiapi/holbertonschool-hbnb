@@ -130,10 +130,10 @@ python3 -m app.models.model_tests.amenity_test
 ```
 
 For detailed endpoint testing instructions, see the
-👉[Endpoint Testing Guide](tests/part3/task3_endpoint_testing.md)
+👉[Endpoint Testing Guide](https://github.com/Anna-Halaapiapi/holbertonschool-hbnb/blob/main/tests/part3/task3_endpoint_testing.md)
 
 For detailed SQL script testing instructions, see the  
-👉 [SQL Script Testing Guide](tests/part3/task9_sqlscript_testing.md)
+👉[SQL Script Testing Guide](https://github.com/Anna-Halaapiapi/holbertonschool-hbnb/blob/main/tests/part3/task9_sqlscript_testing.md)
 
 ## 📚 API Guide & Endpoints
 
