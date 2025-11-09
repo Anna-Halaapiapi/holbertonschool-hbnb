@@ -18,6 +18,10 @@ class User(BaseModel):
     password = db.Column("password", db.String(128), nullable=False)
     is_admin = db.Column("is_admin", db.Boolean, default=False)
     
+    # sqlalchemy mapping relationships for user
+    #places = relationship('Place', back_populates='user', lazy=True)
+    #reviews = relationship('Review', backref='user', lazy=True)
+
     existing_emails = set()
 
     def __init__(self, first_name, last_name, email, password=None, is_admin=False):
@@ -105,13 +109,13 @@ class User(BaseModel):
 
 
     # -- Relationships--
-    def add_place(self, place):
-        """Associate Place with this user"""
-        from .place import Place
+    #def add_place(self, place):
+        #"""Associate Place with this user"""
+        #from .place import Place
         # -- add validation --
-        if not isinstance(place, Place):
-            raise TypeError("You can only add a Place instance to a user.")
-        self.places.append(place)
+        #if not isinstance(place, Place):
+            #raise TypeError("You can only add a Place instance to a user.")
+        #self.places.append(place)
 
 
     # -- Password Management --

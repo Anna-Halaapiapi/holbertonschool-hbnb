@@ -5,7 +5,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 class Place(BaseModel):
     """ This class implements the Place logic
     """
-
+    # sqlalchemy model mapping for place
     #id = db.Column("id", db.Integer, unqiue=True, primrary_key=True)
     _title = db.Column("title", db.String(100), nullable=False)
     description = db.Column("description", db.String(120), nullable=True)
@@ -13,7 +13,12 @@ class Place(BaseModel):
     _latitude = db.Column("latitude", db.Float, nullable=False)
     _longitude = db.Column("longitude", db.Float, nullable=False)
 
-
+    #sqlalchemy relationship mapping for place
+    #user_id = Column(db.column, Integer, ForeignKey('user_id'), nullable=False)
+    #users = relationship('User', back_populates='place', lazy=True)
+    #reviews = relationship('Review', backref='Place', lazy=True)
+    #amenities = relationship('amenities', secondary=association_table, lazy='subquery', back_populates='places')
+    
     def __init__(self, title, price, latitude, longitude, owner, description=None): # -- make description optional --
         super().__init__()
 
