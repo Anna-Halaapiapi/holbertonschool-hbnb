@@ -135,36 +135,6 @@ For detailed endpoint testing instructions, see the
 For detailed SQL script testing instructions, see the
 👉[SQL Script Testing Guide](https://github.com/Anna-Halaapiapi/holbertonschool-hbnb/blob/main/tests/part3/task9_sqlscript_testing.md)
 
-## 📚 API Guide & Endpoints
-
-Once the application is running, visit the URL below to access the interactive Swagger UI. You can view all endpoints, see their required models, and test them directly from your browser.
-
-`http://127.0.0.1:5000/api/v1/`
-
-
-### Example API Usage
-
-#### Create a new user
-```bash
-curl -X POST http://localhost:5000/api/v1/users/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "first_name": "John",
-    "last_name": "Doe",
-    "email": "john.doe@example.com"
-  }'
-```
-#### Create a review
-```bash
-curl -X POST http://localhost:5000/api/v1/reviews/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "Great place to stay!",
-    "rating": 5,
-    "user_id": "<user-id here>",
-    "place_id": "<place-id here>"
-  }'
-```
 
 ## 👥 Authors
 - Ashleigh Henna
