@@ -55,7 +55,7 @@ holbertonschool-hbnb/
 
 ```
 
-## 🚀 Key Features
+## ✅ What's New?
 
 - **Database Persistence**: Fully migrated from in-memory storage to a persistent SQL database using SQLAlchemy and a repository pattern.
 
@@ -68,6 +68,7 @@ holbertonschool-hbnb/
 - **Full Data Relationships**: Implemented all one-to-many and many-to-many relationships between users, places, reviews, and amenities.
 
 ## 🏗️ Core Features
+
 ### Entity Management
 - Full CRUD operations for Users, Places, Amenities, and Reviews.
 - Business logic validation
@@ -88,6 +89,35 @@ holbertonschool-hbnb/
 - Flask-Bcrypt
 - Flask-JWT-Extended
 - Pytest
+
+## 🚀 Getting Started
+
+### Clone the repository
+```bash
+git clone https://github.com/Anna-Halaapiapi/holbertonschool-hbnb.git
+cd holbertonschool-hbnb
+```
+### Create a virtual environment 
+```bash
+python3 -m venv venv
+source venv/bin/activate # On Windows: venv\Scripts\activate
+```
+### Install dependencies
+```bash
+pip install -r requirements.txt
+```
+### Run the application 
+```bash
+python3 run.py
+# The server will start on http://127.0.0.1:5000/.
+```
+
+## 🔧 Environment Variables
+
+| Variable       | Description                          |
+|----------------|--------------------------------------|
+| `SECRET_KEY`    | Flask secret key for sessions        |
+| `DATABASE_URL`   | SQLAlchemy DB connection string      |
 
 ## 📚 API Guide & Endpoints
 
