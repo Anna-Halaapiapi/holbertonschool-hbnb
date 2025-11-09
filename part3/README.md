@@ -119,6 +119,22 @@ python3 run.py
 | `SECRET_KEY`    | Flask secret key for sessions        |
 | `DATABASE_URL`   | SQLAlchemy DB connection string      |
 
+## 🧪 Testing
+
+### Run Unit Tests
+
+```bash
+python3 -m app.models.model_tests.user_test
+python3 -m app.models.model_tests.place_test
+python3 -m app.models.model_tests.amenity_test
+```
+
+For detailed endpoint testing instructions, see the
+👉[Endpoint Testing Guide](tests/part3/task3_endpoint_testing.md)
+
+For detailed SQL script testing instructions, see the  
+👉 [SQL Script Testing Guide](tests/part3/task9_sqlscript_testing.md)
+
 ## 📚 API Guide & Endpoints
 
 Once the application is running, visit the URL below to access the interactive Swagger UI. You can view all endpoints, see their required models, and test them directly from your browser.
