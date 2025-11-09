@@ -1,4 +1,3 @@
-# DRAFT 
 # HBnB Project: Part 3
 
 This version features a persistent database, a complete authentication and authorization system, and a layered architecture built with Flask, Flask-RESTX, and SQLAlchemy.
