@@ -1,4 +1,5 @@
 from .base_model import BaseModel
+from sqlalchemy.ext.hybrid import hybrid_property
 
 class Amenity(BaseModel):
 
@@ -6,7 +7,7 @@ class Amenity(BaseModel):
         super().__init__()  # initialise UUID and timestamps
         self.name = name # calls setter, validation happens automatically
 
-    @property
+    @hybrid_property
     def name(self):
         return self._name
 
@@ -17,3 +18,7 @@ class Amenity(BaseModel):
         if len(value.strip()) > 50:
             raise ValueError("Amenity name must be less than 50 characters")
         self._name = value.strip()
+
+    @name.expression
+    def text(cls):
+        return cls._name

@@ -1,9 +1,18 @@
 from .base_model import BaseModel
 from .user import User
 from .place import Place
+from app.extensions import db
+from sqlalchemy.ext.hybrid import hybrid_property
 
 class Review(BaseModel):
     """ This module represents a review for a Place - written by a User"""
+    # sqlaclehmy model mapping for review
+    __tablename__ = 'reviews'
+
+    #id = db.Column("id", db.Integer, unqiue=True, primrary_key=True)
+    _text = db.Column("text", db.String(120), nullable=False)
+    rating = db.Column("rating", db.Integer, nullable=False)
+
 
     def __init__(self, text, rating, place, user):
         super().__init__()
@@ -18,7 +27,7 @@ class Review(BaseModel):
 
 
     # -- Text attribute / validation -- 
-    @property
+    @hybrid_property
     def text(self):
         return self._text
 
@@ -28,9 +37,12 @@ class Review(BaseModel):
             raise ValueError("Review text is required.")
         self._text = value.strip()
 
-
+    @text.expression
+    def text(cls):
+        return cls._text
+    
     # -- Rating attribute / validation --
-    @property
+    @hybrid_property
     def rating(self):
         return self._rating
 
@@ -40,6 +52,9 @@ class Review(BaseModel):
             raise ValueError("Rating must be an integer between 1 and 5.")
         self._rating = value
 
+    @rating.expression
+    def rating(cls):
+        return cls._rating
 
     # -- Place attribute / validation --
     @property

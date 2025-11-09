@@ -1,8 +1,19 @@
 from .base_model import BaseModel
+from app.extensions import db
+from sqlalchemy.ext.hybrid import hybrid_property
 
 class Place(BaseModel):
     """ This class implements the Place logic
     """
+
+    #id = db.Column("id", db.Integer, unqiue=True, primrary_key=True)
+    _title = db.Column("title", db.String(100), nullable=False)
+    description = db.Column("description", db.String(120), nullable=True)
+    _price = db.Column("price", db.Float, nullable=False)
+    _latitude = db.Column("latitude", db.Float, nullable=False)
+    _longitude = db.Column("longitude", db.Float, nullable=False)
+
+
     def __init__(self, title, price, latitude, longitude, owner, description=None): # -- make description optional --
         super().__init__()
 
@@ -21,7 +32,7 @@ class Place(BaseModel):
 
 
     # -- Property for title --
-    @property
+    @hybrid_property
     def title(self):
         return self._title
 
@@ -35,9 +46,12 @@ class Place(BaseModel):
             raise ValueError("Title must not exceed 100 characters")
         self._title = value.strip()
 
+    @title.expression
+    def title(cls):
+        return cls._title
 
     # Property for price
-    @property
+    @hybrid_property
     def price(self):
         return self._price
 
@@ -49,8 +63,13 @@ class Place(BaseModel):
             raise ValueError("Price must be greater than zero")
         self._price = float(value)
 
+    @price.expression
+    def price(cls):
+        return cls._price
+    
+
     # Property for latitude
-    @property
+    @hybrid_property
     def latitude(self):
         return self._latitude
 
@@ -62,8 +81,13 @@ class Place(BaseModel):
             raise ValueError("Latitude must be within the range of -90 to 90")
         self._latitude = float(value)
 
+    @latitude.expression
+    def latitude(cls):
+        return cls._latitude
+    
+
     # Property for longitude
-    @property
+    @hybrid_property
     def longitude(self):
         return self._longitude
 
@@ -75,6 +99,10 @@ class Place(BaseModel):
             raise ValueError("Longitude must be within the range of -180 to 180")
         self._longitude = float(value)
 
+    @longitude.expression
+    def longitude(cls):
+        return cls._longitude
+    
 
 # Title and Description validations
     def validate(self):
