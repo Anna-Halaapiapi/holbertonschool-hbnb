@@ -16,7 +16,7 @@ class Review(BaseModel):
     #sqlalchemy relationship mapping for review
     place_id = db.Column(db.String(100), db.ForeignKey('places.id'))
     user_id = db.Column(db.String(36), db.ForeignKey('users.id'))
-    
+
     def __init__(self, text, rating, place, user):
         super().__init__()
 
@@ -25,8 +25,9 @@ class Review(BaseModel):
         self.place = place
         self.user = user
 
-        # Link review to place
-        self.place.add_review(self)
+        # REMOVING - handled by SQLAlchemy relationships now
+        # # Link review to place
+        # self.place.add_review(self)
 
 
     # -- Text attribute / validation -- 
@@ -59,25 +60,27 @@ class Review(BaseModel):
     def rating(cls):
         return cls._rating
 
-    # -- Place attribute / validation --
-    @property
-    def place(self):
-        return self._place
 
-    @place.setter
-    def place(self, value):
-        if not isinstance(value, Place):
-            raise TypeError("A Place instance must exist.")
-        self._place = value
+    # REMOVING FOR TESTING
+    # # -- Place attribute / validation --
+    # @property
+    # def place(self):
+    #     return self._place
+
+    # @place.setter
+    # def place(self, value):
+    #     if not isinstance(value, Place):
+    #         raise TypeError("A Place instance must exist.")
+    #     self._place = value
 
 
-    # -- User attribute / validation --
-    @property
-    def user(self):
-        return self._user
+    # # -- User attribute / validation --
+    # @property
+    # def user(self):
+    #     return self._user
 
-    @user.setter
-    def user(self, value):
-        if not isinstance(value, User):
-            raise TypeError("A User instance must exist.")
-        self._user = value
+    # @user.setter
+    # def user(self, value):
+    #     if not isinstance(value, User):
+    #         raise TypeError("A User instance must exist.")
+    #     self._user = value
