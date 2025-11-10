@@ -7,15 +7,15 @@ from sqlalchemy.ext.hybrid import hybrid_property
 class Review(BaseModel):
     """ This module represents a review for a Place - written by a User"""
     # sqlaclehmy model mapping for review
-    #__tablename__ = 'reviews'
+    __tablename__ = 'reviews'
 
-    #id = db.Column("id", db.Integer, unqiue=True, primrary_key=True)
-    #_text = db.Column("text", db.String(120), nullable=False)
-    #rating = db.Column("rating", db.Integer, nullable=False)
+    id = db.Column("id", db.String(100), primary_key=True)
+    _text = db.Column("text", db.String(120), nullable=False)
+    _rating = db.Column("rating", db.Integer, nullable=False)
 
     #sqlalchemy relationship mapping for review
-    #place_id = Column(db.column, Integer, ForeignKey('place_id'), nullable=False)
-    #user_id = Column(db.column, Integer, ForeignKey('user_id'), nullable=False)
+    place_id = db.Column(db.Integer, db.ForeignKey('places.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     
     def __init__(self, text, rating, place, user):
         super().__init__()

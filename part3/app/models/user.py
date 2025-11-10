@@ -3,6 +3,7 @@ from app.extensions import bcrypt
 from app.extensions import db
 from sqlalchemy.ext.hybrid import hybrid_property
 import re  # used for matching strings based on patterns
+import uuid
 
 class User(BaseModel):
     """
@@ -12,6 +13,7 @@ class User(BaseModel):
     """
     __tablename__ = 'users'
 
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     _first_name = db.Column("first_name", db.String(50), nullable=False)
     _last_name = db.Column("last_name", db.String(50), nullable=False)
     _email = db.Column("email", db.String(120), nullable=False, unique=True)
