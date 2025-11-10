@@ -14,8 +14,8 @@ class Review(BaseModel):
     _rating = db.Column("rating", db.Integer, nullable=False)
 
     #sqlalchemy relationship mapping for review
-    place_id = db.Column(db.Integer, db.ForeignKey('places.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    place_id = db.Column(db.String(100), db.ForeignKey('places.id'))
+    user_id = db.Column(db.String(36), db.ForeignKey('users.id'))
     
     def __init__(self, text, rating, place, user):
         super().__init__()
