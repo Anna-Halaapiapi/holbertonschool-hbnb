@@ -3,19 +3,20 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from app.extensions import db
 
 # sqlalchemy relationship association table for Place and Amenity
-#association_table = db.Table('association_table',
-                            #db.Column('places', db.Integer, db.ForeignKey('amenities', primary_key=True),
-                                #db.Column('amenities', db.Integer, db.ForeignKey('places'), primary_key=True))
-                                #)
+association_table = db.Table(
+    'association_table', 
+    db.Column('place_id', db.String(100), db.ForeignKey('places.id'), primary_key=True), 
+    db.Column('amenity_id', db.String(100), db.ForeignKey('amenities.id'), primary_key=True)
+    )
 
 class Amenity(BaseModel):
     # sqlalchemy model mapping for amenity
-    #__tablename__ = 'amenities'
-    #id = db.Column("id", db.String(100), primrary_key=True)
-    #_name = db.Column("name", db.String(50), nullable=False)
+    __tablename__ = 'amenities'
+    id = db.Column("id", db.String(100), primary_key=True)
+    _name = db.Column("name", db.String(50), nullable=False)
 
     # sqlalchemy relationship mapping for amenity
-    #places = db.relationship('places', secondary=association_table, lazy='subquery', back_populates='amenities')
+    places = db.relationship('Place', secondary=association_table, back_populates='amenities', lazy=True)
 
     def __init__(self, name):
         super().__init__()  # initialise UUID and timestamps

@@ -1,7 +1,7 @@
 from .base_model import BaseModel
 from app.extensions import db
 from sqlalchemy.ext.hybrid import hybrid_property
-#from .amenity import association_table
+from app.models.amenity import association_table
 
 class Place(BaseModel):
     """ This class implements the Place logic
@@ -19,7 +19,7 @@ class Place(BaseModel):
     user_id = db.Column(db.String(100), db.ForeignKey('users.id'), nullable=False)
     owner = db.relationship('User', back_populates='places', lazy=True)
     reviews = db.relationship('Review', backref='place', lazy=True)
-    #amenities = db.relationship('amenities', secondary=association_table, lazy='subquery', back_populates='places')
+    amenities = db.relationship('Amenity', secondary=association_table, back_populates='places', lazy=True,)
     
     def __init__(self, title, price, latitude, longitude, owner, description=None): # -- make description optional --
         super().__init__()
