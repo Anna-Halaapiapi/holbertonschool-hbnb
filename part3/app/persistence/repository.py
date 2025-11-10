@@ -48,6 +48,8 @@ class SQLAlchemyRepository(Repository):
             for key, value in data.items():
                 setattr(obj, key, value)
             db.session.commit()
+            return obj
+        return None
 
     def delete(self, obj_id):
         obj = self.get(obj_id)
