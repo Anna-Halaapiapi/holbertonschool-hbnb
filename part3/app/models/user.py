@@ -19,7 +19,7 @@ class User(BaseModel):
     is_admin = db.Column("is_admin", db.Boolean, default=False)
     
     # sqlalchemy mapping relationships for user
-    #places = relationship('Place', back_populates='user', lazy=True)
+    places = db.relationship('Place', back_populates='owner', lazy=True)
     #reviews = relationship('Review', backref='user', lazy=True)
 
     existing_emails = set()

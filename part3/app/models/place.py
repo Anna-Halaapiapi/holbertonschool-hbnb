@@ -6,7 +6,7 @@ class Place(BaseModel):
     """ This class implements the Place logic
     """
     # sqlalchemy model mapping for place
-    id = db.Column("id", db.Integer, primary_key=True)
+    id = db.Column("id", db.String(100), primary_key=True)
     _title = db.Column("title", db.String(100), nullable=False)
     description = db.Column("description", db.String(120), nullable=True)
     _price = db.Column("price", db.Float, nullable=False)
@@ -14,8 +14,8 @@ class Place(BaseModel):
     _longitude = db.Column("longitude", db.Float, nullable=False)
 
     #sqlalchemy relationship mapping for place
-    #user_id = Column(db.column, Integer, ForeignKey('user_id'), nullable=False)
-    #users = relationship('User', back_populates='place', lazy=True)
+    user_id = db.Column(db.String(100), db.ForeignKey('users.id'), nullable=False)
+    owner = db.relationship('User', back_populates='places', lazy=True)
     #reviews = relationship('Review', backref='Place', lazy=True)
     #amenities = relationship('amenities', secondary=association_table, lazy='subquery', back_populates='places')
     
