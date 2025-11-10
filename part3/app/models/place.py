@@ -18,7 +18,7 @@ class Place(BaseModel):
     #sqlalchemy relationship mapping for place
     user_id = db.Column(db.String(100), db.ForeignKey('users.id'), nullable=False)
     owner = db.relationship('User', back_populates='places', lazy=True)
-    reviews = db.relationship('Review', backref='Place', lazy=True)
+    reviews = db.relationship('Review', backref='place', lazy=True)
     #amenities = db.relationship('amenities', secondary=association_table, lazy='subquery', back_populates='places')
     
     def __init__(self, title, price, latitude, longitude, owner, description=None): # -- make description optional --
