@@ -5,6 +5,7 @@ from app.models.user import User
 from app.models.place import Place
 from app.models.review import Review
 from app.models.amenity import Amenity
+from app.extensions import db
 
 
 class HBnBFacade:
@@ -37,8 +38,37 @@ class HBnBFacade:
         return self.user_repo.get_all()
     
     def update_user(self, user_id, data):
-        updated_user = self.user_repo.update(user_id, data)
-        return updated_user
+        """Update user with validation checks"""
+
+        user = self.user_repo.get(user_id)
+        if not user:
+            raise ValueError(f"User with ID '{user_id}' not found")
+
+        allowed_fields = ['first_name', 'last_name', 'email', 'password', 'is_admin']
+
+        for key, value in data.items():
+            if key not in allowed_fields or value is None:
+                continue
+
+            # -- Handle password updates securely --
+            if key == 'password':
+                user.hash_password(value)
+                continue
+
+            # -- Handle email updates with uniqueness check --
+            if key == 'email':
+                existing = self.user_repo.get_user_by_email(value)
+                if existing and existing.id != user.id:
+                    raise ValueError("Email already in user")
+                user.email = value
+                continue
+
+            # -- Handle normal fields (will trigger property validation) --
+            setattr(user, key, value)
+
+        db.session.commit()
+        return user
+
 
     # Placeholder method for fetching a place by ID
     def create_place(self, place_data):
