@@ -22,7 +22,7 @@ class User(BaseModel):
     
     # sqlalchemy mapping relationships for user
     places = db.relationship('Place', back_populates='owner', lazy=True)
-    #reviews = relationship('Review', backref='user', lazy=True)
+    reviews = db.relationship('Review', backref='user', lazy=True)
 
     existing_emails = set()
 
