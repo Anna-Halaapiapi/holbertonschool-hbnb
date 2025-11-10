@@ -6,7 +6,7 @@ class Place(BaseModel):
     """ This class implements the Place logic
     """
     # sqlalchemy model mapping for place
-    #id = db.Column("id", db.Integer, unqiue=True, primrary_key=True)
+    id = db.Column("id", db.Integer, unqiue=True, primary_key=True)
     _title = db.Column("title", db.String(100), nullable=False)
     description = db.Column("description", db.String(120), nullable=True)
     _price = db.Column("price", db.Float, nullable=False)
@@ -33,7 +33,7 @@ class Place(BaseModel):
 
        
         self.validate() # Validate attribute values
-        owner.add_place(self) # Link place to user
+        #owner.add_place(self) # Link place to user
 
 
     # -- Property for title --
