@@ -391,9 +391,9 @@ curl -X POST "http://127.0.0.1:5000/api/v1/amenities/" -d '{"name": "Hot Tub"}' 
 }
 //403
 ```
+
 ### Step 2: Confirm amenity wasn't created in the database (expected result = no output)
 ```python
->>> rows = db.session.execute(db.text("SELECT * FROM amenities")).fetchall()
 >>> rows = db.session.execute(db.text("SELECT * FROM amenities")).fetchall()
 >>> for r in rows:
 ...     print(dict(r._mapping))
