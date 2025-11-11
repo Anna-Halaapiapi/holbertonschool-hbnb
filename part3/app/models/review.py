@@ -63,24 +63,31 @@ class Review(BaseModel):
 
     # REMOVING FOR TESTING
     # # -- Place attribute / validation --
-    # @property
-    # def place(self):
-    #     return self._place
+    @hybrid_property
+    def place(self):
+        return self._place
 
-    # @place.setter
-    # def place(self, value):
-    #     if not isinstance(value, Place):
-    #         raise TypeError("A Place instance must exist.")
-    #     self._place = value
+    @place.setter
+    def place(self, value):
+        if not isinstance(value, Place):
+            raise TypeError("A Place instance must exist.")
+        self._place = value
 
-
+    @place.expression
+    def place(cls):
+        return cls._place
+    
     # # -- User attribute / validation --
-    # @property
-    # def user(self):
-    #     return self._user
+    @hybrid_property
+    def owner(self):
+        return self._owner
 
-    # @user.setter
-    # def user(self, value):
-    #     if not isinstance(value, User):
-    #         raise TypeError("A User instance must exist.")
-    #     self._user = value
+    @owner.setter
+    def owner(self, value):
+        if not isinstance(value, User):
+            raise TypeError("A User instance must exist.")
+        self._owner = value
+
+    @owner.expression
+    def owner(cls):
+        return cls._owner
