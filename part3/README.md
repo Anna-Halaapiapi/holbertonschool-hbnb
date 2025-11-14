@@ -105,10 +105,32 @@ source venv/bin/activate # On Windows: venv\Scripts\activate
 ```bash
 pip install -r requirements.txt
 ```
+###Enter MySQL
+```bash
+mysql -u root
+```
+###Execute tables.sql
+```sql
+CREATE DATABASE hbnb_db;
+EXIT;
+```
+###Load initial tables and data
+```sql
+mysql -u root hbnb_db < tables.sql
+mysql -u root -p hbnb_db < initial_data.sql
+Enter Password: admin1234
+```
 ### Run the application 
 ```bash
 python3 run.py
 # The server will start on http://127.0.0.1:5000/.
+```
+###Log in as an Admin to test via Swagger
+```bash
+{
+  "email": "admin@example.com",
+  "password": "adminpassword"
+}
 ```
 
 ## 🔧 Environment Variables
