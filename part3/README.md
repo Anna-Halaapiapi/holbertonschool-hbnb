@@ -103,6 +103,7 @@ source venv/bin/activate # On Windows: venv\Scripts\activate
 ```
 ### Install dependencies
 ```bash
+cd part3
 pip install -r requirements.txt
 ```
 ### Run the application 
