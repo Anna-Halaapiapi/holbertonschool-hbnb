@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===============================
   // Place Details Page Logic
   // ===============================
-  const placeDetails = document.getElementById('place-details');
+  const placeDetails = document.getElementById('place-info');
   const reviewsList = document.getElementById('reviews-list');
   const reviewForm = document.getElementById('review-form');
 
