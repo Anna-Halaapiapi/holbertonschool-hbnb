@@ -106,21 +106,26 @@ source venv/bin/activate # On Windows: venv\Scripts\activate
 cd part3
 pip install -r requirements.txt
 ```
-### Run the application 
+### Start the application
 ```bash
 python3 run.py
 
 # The server will start on http://127.0.0.1:5000/.
-
-# The admin user will be created in the SQLite database upon running the application in this step.
+# The SQLite database (development.db) and tables will be created in this step
 ```
-### Log in as an Admin to test via Swagger
+### Stop the application
 ```bash
-{
-  "email": "admin@example.com",
-  "password": "adminpassword"
-}
+CTRL + C
 ```
+### Seed the admin user
+```bash
+sqlite3 instance/development.db < admin_user.sql
+```
+### Run the application normally
+```bash
+python3 run.py
+```
+
 
 ## 🔧 Environment Variables
 

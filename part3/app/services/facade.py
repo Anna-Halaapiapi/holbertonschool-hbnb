@@ -212,26 +212,3 @@ class HBnBFacade:
             return None
         amenity.name = amenity_data.get("name", amenity.name)
         return amenity
-
-# -- BOOTSTRAP METHOD FOR ADMIN --
-def bootstrap_admin():
-    from app import create_app
-    from app.extensions import db
-    
-    app = create_app()
-    with app.app_context():
-        admin = User.query.filter_by(email='admin@example.com').first()
-        if admin:
-            print('Admin already exists')
-            return
-
-        admin = User(
-                first_name='Super',
-                last_name='Admin',
-                email='admin@example.com',
-                password='adminpassword',
-                is_admin=True
-        )
-        db.session.add(admin)
-        db.session.commit()
-        print("Admin user created successfully")
