@@ -5,5 +5,7 @@ INSERT INTO users (id, first_name, last_name, email, password, is_admin, created
     'Admin',
     'admin@example.com',
     '$2a$12$8mqK0BGhkRzmWgXz2n8vKevouTPHQvS.Tfr/3Qz32bUw78D4wz/Mq', -- hashed p/w
-    TRUE
+    TRUE,
+    datetime('now', 'localtime'), -- mimics Python's local timestamping
+    datetime('now', 'localtime')
 );
