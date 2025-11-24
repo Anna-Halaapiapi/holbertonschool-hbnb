@@ -47,33 +47,28 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===============================
-  // Index Page Logic (List of Places)
+  // Index Page Logic
   // ===============================
   const placesList = document.getElementById('places-list');
-  const countryFilter = document.getElementById('country-filter');
+  const priceFilter = document.getElementById('price-filter');
+  const loginLink = document.getElementById('login-link');
 
-  if (placesList && countryFilter) {
+  if (placesList && priceFilter) {
     const token = getCookie('token');
+
+    // Toggle login link visibility
     if (!token) {
-      window.location.href = 'login.html';
-      return;
+      loginLink.style.display = 'block';
+    } else {
+      loginLink.style.display = 'none';
     }
 
+    // Fetch places
     fetch('http://127.0.0.1:5000/api/v1/places', {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
     })
       .then(res => res.json())
       .then(places => {
-        // Populate country filter
-        const countries = [...new Set(places.map(p => p.country))];
-        countries.forEach(country => {
-          const option = document.createElement('option');
-          option.value = country;
-          option.textContent = country;
-          countryFilter.appendChild(option);
-        });
-
-        // Render places
         function renderPlaces(filteredPlaces) {
           placesList.innerHTML = '';
           filteredPlaces.forEach(place => {
@@ -88,12 +83,16 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
 
+        // Initial render
         renderPlaces(places);
 
-        // Filter by country
-        countryFilter.addEventListener('change', () => {
-          const selected = countryFilter.value;
-          const filtered = selected ? places.filter(p => p.country === selected) : places;
+        // Price filter logic
+        priceFilter.addEventListener('change', () => {
+          const selected = priceFilter.value;
+          const filtered =
+            selected === 'all'
+              ? places
+              : places.filter(p => p.price <= parseInt(selected));
           renderPlaces(filtered);
         });
       })
@@ -106,11 +105,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===============================
   // Place Details Page Logic
   // ===============================
-  const placeDetails = document.getElementById('place-info');
+  const placeDetails = document.getElementById('place-details');
   const reviewsList = document.getElementById('reviews-list');
   const reviewForm = document.getElementById('review-form');
+  const addReviewSection = document.getElementById('add-review');
 
-  if (placeDetails && reviewsList) {
+  if (placeDetails) {
     const token = getCookie('token');
     const urlParams = new URLSearchParams(window.location.search);
     const placeId = urlParams.get('id');
@@ -127,12 +127,15 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(res => res.json())
       .then(place => {
         placeDetails.innerHTML = `
-          <h2>${place.title}</h2>
-          <p><strong>Host:</strong> ${place.owner_name || 'Unknown'}</p>
-          <p><strong>Price:</strong> $${place.price}/night</p>
-          <p><strong>Description:</strong> ${place.description}</p>
-          <p><strong>Amenities:</strong> ${place.amenities ? place.amenities.join(', ') : 'None'}</p>
-        `;
+        <h2>${place.title}</h2>
+        <p><strong>Host:</strong> ${place.owner_name || 'Unknown'}</p>
+        <p><strong>Price:</strong> $${place.price}/night</p>
+        <p><strong>Description:</strong> ${place.description}</p>
+        <p><strong>Amenities:</strong> ${place.amenities ? place.amenities.join(', ') : 'None'}</p>
+      `;
+      })
+      .catch(() => {
+        placeDetails.innerHTML = '<p>Failed to load place details.</p>';
       });
 
     // Fetch reviews
@@ -144,16 +147,24 @@ document.addEventListener('DOMContentLoaded', () => {
           const card = document.createElement('div');
           card.className = 'review-card';
           card.innerHTML = `
-            <p>${r.comment}</p>
-            <p><strong>User:</strong> ${r.user_name}</p>
-            <p><strong>Rating:</strong> ${r.rating}/5</p>
-          `;
+          <p>${r.comment}</p>
+          <p><strong>User:</strong> ${r.user_name}</p>
+          <p><strong>Rating:</strong> ${r.rating}/5</p>
+        `;
           reviewsList.appendChild(card);
         });
+      })
+      .catch(() => {
+        reviewsList.innerHTML = '<p>No reviews available.</p>';
       });
 
-    // Handle review submission (inline form)
-    if (reviewForm && token) {
+    // Show/hide review form
+    if (!token) {
+      addReviewSection.style.display = 'none';
+    } else {
+      addReviewSection.style.display = 'block';
+
+      // Handle review submission
       reviewForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const comment = document.getElementById('review-text').value;
@@ -181,21 +192,18 @@ document.addEventListener('DOMContentLoaded', () => {
           alert('An error occurred.');
         }
       });
-    } else if (reviewForm && !token) {
-      document.getElementById('add-review').style.display = 'none';
     }
   }
 
   // ===============================
-  // Add Review Page Logic (Standalone)
+  // Add Review Page Logic
   // ===============================
-  const standaloneReviewForm = document.getElementById('review-form');
   const placeName = document.getElementById('place-name');
 
-  if (standaloneReviewForm && placeName) {
+  if (placeName && reviewForm) {
     const token = getCookie('token');
     if (!token) {
-      window.location.href = 'login.html';
+      window.location.href = 'index.html';
       return;
     }
 
@@ -207,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Fetch place name for context
+    // Fetch place name
     fetch(`http://127.0.0.1:5000/api/v1/places/${placeId}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -217,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
     // Handle form submission
-    standaloneReviewForm.addEventListener('submit', async (e) => {
+    reviewForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const comment = document.getElementById('review').value;
       const rating = document.getElementById('rating').value;
@@ -233,15 +241,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (response.ok) {
-          alert('Review added!');
+          alert('Review submitted successfully!');
+          reviewForm.reset();
           window.location.href = `place.html?id=${placeId}`;
         } else {
           const data = await response.json();
-          alert(data.msg || 'Failed to add review');
+          alert(data.msg || 'Failed to submit review');
         }
       } catch (err) {
         console.error('Error submitting review:', err);
-        alert('An error occurred.');
+        alert('An error occurred while submitting your review.');
       }
     });
   }
