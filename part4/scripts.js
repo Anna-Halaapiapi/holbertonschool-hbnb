@@ -21,20 +21,21 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify({ email, password })
         });
 
-
+        const data = await response.json();
         if (response.ok) {
-          const data = await response.json();
+          /*const data = await response.json(); */
           document.cookie = `token=${data.access_token}; path=/`;
           window.location.href = 'index.html';
         } else {
           alert('Login failed: ' + response.statusText);
         }
-      } catch (err) {
+      }catch (err) {
         console.error('Login error:', err);
         alert('An error occurred. Please try again.');
-      }
-    });
-  }
+      } 
+      } 
+    )};
+
 
   // ===============================
   // Index Page Logic
