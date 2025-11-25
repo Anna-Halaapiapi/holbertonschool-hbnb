@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restx import Api
 from app.extensions import bcrypt, jwt, db
+from flask_cors import CORS
 
 
 def create_app(config_class="config.DevelopmentConfig"):
@@ -9,6 +10,7 @@ def create_app(config_class="config.DevelopmentConfig"):
     bcrypt.init_app(app)
     jwt.init_app(app)
     db.init_app(app)
+    CORS(app)
     
     if not app.config.get("SECRET_KEY"):
         app.config["SECRET_KEY"] = "your-super-secret-key"
