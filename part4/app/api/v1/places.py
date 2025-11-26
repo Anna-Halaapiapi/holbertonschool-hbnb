@@ -1,7 +1,7 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
-from app.api.v1.reviews import serialize_review
+#from app.api.v1.reviews import serialize_review
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from flask_cors import CORS, cross_origin
 
@@ -53,11 +53,17 @@ def serialize_place(place):
     # -- Serialize reviews (nested data) --
     reviews_list = []
     for review in facade.get_reviews_by_place(place.id):
+        review_user = facade.get_user(review.user_id)
+        user_name = "Unknown"
+        if review_user:
+            user_name = f"{review_user.first_name} {review_user.last_name}"
+            
         reviews_list.append({
             'id': review.id,
             'text': review.text,
             'rating': review.rating,
-            'user_id': review.user_id
+            'user_id': review.user_id,
+            'user_name': user_name
         })
     
 
@@ -72,7 +78,19 @@ def serialize_place(place):
         'amenities': amenities_list, # -- Nested amenities data (unchanged) --
         'reviews': reviews_list # -- Nested reviews data (unchanged) --
     }
-
+def serialize_review(review):
+    """Function serializes review object"""
+    user = facade.get_user(review.user_id)
+    user_name = "Unknown"
+    if user:
+        user_name = f"{user.first_name} {user.last_name}"
+    return {
+        'id': review.id,
+        'text': review.text,
+        'rating': review.rating,
+        'user_id': review.user_id,
+        'place_id': review.place_id
+    }
 
 
 @api.route('/')
@@ -235,7 +253,44 @@ class PlaceReviewList(Resource):
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Get all reviews for a specific place"""
+        place = facade.get_place(place_id)
+        if not place:
+            return {'error': 'Place not found'}, 404
+
         reviews = facade.get_reviews_by_place(place_id)
-        if not reviews:
-            return {'error': 'Place not found or has no reviews'}, 404
         return [serialize_review(r) for r in reviews], 200
+
+    @api.expect(api.model('Review', {
+        'text': fields.String(required=True, description='Text of the review'),
+        'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
+    }))
+    @api.response(201, 'Review successfully created')
+    @api.response(400, 'Invalid input data')
+    @api.response(404, 'Place not found')
+    @jwt_required()
+    def post(self, place_id):
+        """Create a new review for a place"""
+        user_id = get_jwt_identity()
+        data = api.payload
+        
+        place = facade.get_place(place_id)
+        if not place:
+            return {'error': 'Place not found'}, 404
+
+        if not data or 'text' not in data or 'rating' not in data:
+            return {'error': 'Missing text or rating'}, 400
+        
+        review_data = {
+            'text': data['text'],
+            'rating': int(data['rating']),
+            'user_id': user_id,
+            'place_id': place_id
+        }
+
+        try:
+            new_review = facade.create_review(review_data)
+            if isinstance(new_review, tuple):
+                new_review = new_review[0]
+            return serialize_review(new_review), 201
+        except ValueError as e:
+            return {'error': str(e)}, 400

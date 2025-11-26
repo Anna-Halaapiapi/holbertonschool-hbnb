@@ -235,7 +235,7 @@ function displayPlaceDetails(place) {
         const card = document.createElement('div');
         card.className = 'review-card';
         card.innerHTML = `
-           <p>${review.comment}</p>
+           <p>${review.text}</p>
            <p><strong>Rating:</strong> ${review.rating}/5</p>
            <p><small>By: ${review.user_name || 'Unknown'}</small></p>
         `;
@@ -256,7 +256,7 @@ async function submitReview(token, placeId, reviewText, rating) {
         'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({
-        comment: reviewText,
+        text: reviewText,
         rating: rating
       })
     });
