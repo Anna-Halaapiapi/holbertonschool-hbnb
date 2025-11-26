@@ -211,6 +211,7 @@ async function fetchPlaceDetails(token, placeId) {
 }
 
 function displayPlaceDetails(place) {
+  //console.log("API Place Data:", place); // Debugging line
   const placeInfo = document.getElementById('place-info');
   const reviewsSection = document.getElementById('reviews-list');
 
@@ -219,7 +220,7 @@ function displayPlaceDetails(place) {
     const infoContent = document.createElement('div');
     infoContent.innerHTML = `
       <h3>${place.title}</h3>
-      <p><strong>Host:</strong> ${place.owner_name || 'Unknown'}</p>
+      <p><strong>Host:</strong> ${place.owner.first_name} ${place.owner.last_name}</p>
       <p><strong>Price:</strong> $${place.price}/night</p>
       <p><strong>Description:</strong> ${place.description}</p>
       <p><strong>Amenities:</strong> ${place.amenities ? place.amenities.join(', ') : 'None'}</p>
