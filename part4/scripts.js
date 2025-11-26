@@ -92,10 +92,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add Review Page Logic
   // ===============================
   const reviewForm = document.getElementById('review-form');
+  const isPlaceDetailsPage = document.getElementById('place-details');
+
   if (reviewForm) {
     // If not logged in, redirect immediately
     if (!token) {
-      window.location.href = 'index.html';
+      if (!isPlaceDetailsPage) {
+        window.location.href = 'index.html';
+      }
     } else {
       reviewForm.addEventListener('submit', async (event) => {
         event.preventDefault();
