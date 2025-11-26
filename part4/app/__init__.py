@@ -10,7 +10,7 @@ def create_app(config_class="config.DevelopmentConfig"):
     bcrypt.init_app(app)
     jwt.init_app(app)
     db.init_app(app)
-    CORS(app)
+    CORS(app, supports_credentials=True)
     
     if not app.config.get("SECRET_KEY"):
         app.config["SECRET_KEY"] = "your-super-secret-key"

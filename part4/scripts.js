@@ -77,7 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (placeDetailsSection) {
     checkAuthentication();
-
+    
+    // Attempt to redirect unauthenticated user to login page when clicking on view details on index.html (didn't work)
+    // if (!token) {
+    //   window.location.href = 'login.html';
+    // } 
+    
     if (placeId) {
       fetchPlaceDetails(token, placeId);
     }
@@ -147,7 +152,7 @@ function checkAuthentication() {
 async function fetchPlaces(token) {
   try {
     const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-    const response = await fetch('http://127.0.0.1:5000/api/v1/places', {
+    const response = await fetch('http://127.0.0.1:5000/api/v1/places/', {
       method: 'GET',
       headers: headers
     });

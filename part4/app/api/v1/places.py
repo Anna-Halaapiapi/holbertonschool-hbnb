@@ -3,6 +3,7 @@ from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from app.api.v1.reviews import serialize_review
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from flask_cors import CORS, cross_origin
 
 api = Namespace('places', description='Place operations')
 
@@ -131,7 +132,6 @@ class AdminPlaceResource(Resource):
     @api.response(404, 'Place not found')   
     def get(self, place_id):
         """Get place details by ID """
-
         try:
             place = facade.get_place(place_id)
             if place is None:
