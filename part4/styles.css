@@ -2,14 +2,26 @@
    CYBERPUNK THEME - HBnB
    ========================================= */
 
+
 /* 1. Imports & Variables */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap');
+
+/* Qubegenix Font */
+@font-face {
+  font-family: "Qubegenix";
+  src: url("./fonts/qubegenix.ttf") format("truetype");
+}
+/* Ryzes Font */
+@font-face {
+  font-family: "Ryzes";
+  src: url("./fonts/ryzes.ttf") format("truetype");
+}
 
 :root {
   --bg-color: #050505;       /* Void Black */
   --card-bg: #111111;        /* Dark Grey */
   --neon-cyan: #00f3ff;      /* Main Accent */
-  --neon-pink: #ff0055;      /* Secondary Accent */
+  --neon-pink: #FF00FF;      /* Secondary Accent */
   --neon-green: #0aff00;     /* Success/Go */
   --text-main: #e0e0e0;      /* Off-white */
   --text-dim: #888888;
@@ -36,8 +48,17 @@ body {
   background-size: 40px 40px;
 }
 
-h1, h2, h3 {
-  font-family: 'Orbitron', sans-serif; /* Futuristic Header Font */
+h1, h2 {
+  font-family: 'Ryzes', sans-serif; /* Futuristic Header Font */
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); /* Neon Glow */
+  margin-bottom: 1rem;
+}
+
+h3 {
+  font-family: 'Qubegenix', sans-serif; /* Futuristic Header Font */
   text-transform: uppercase;
   letter-spacing: 2px;
   color: var(--neon-cyan);
@@ -68,9 +89,9 @@ nav a {
   color: var(--text-main);
   text-decoration: none;
   margin-left: 1.5rem;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Ryzes', sans-serif;
   text-transform: uppercase;
-  font-size: 0.9rem;
+  font-size: 1.3rem;
   transition: all 0.3s ease;
 }
 
@@ -119,6 +140,7 @@ footer {
   background-color: var(--card-bg);
   border: 1px solid var(--neon-cyan);
   color: var(--text-main);
+  font-size: 0.85rem;
   width: 320px;
   margin: 20px;
   padding: 20px;
@@ -217,7 +239,7 @@ button, .details-button, .login-button {
   background-color: transparent;
   color: var(--neon-cyan);
   border: 1px solid var(--neon-cyan);
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Roboto Mono', monospace;
   text-transform: uppercase;
   padding: 12px 24px;
   margin-top: 20px;
