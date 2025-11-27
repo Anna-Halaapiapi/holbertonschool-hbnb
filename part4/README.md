@@ -39,8 +39,9 @@ holbertonschool-hbnb/
 │   │   │   ├── __init__.py
 │   │   │   ├── facade.py
 │   │   │   └── extensions.py
-│   ├── config.py               # App and DB configuration
-│   ├── initial_data.sql        # Sample data for DB seeding
+|   ├── instance/
+│   │   │   ├── development.db
+|   ├── initial_data.sql        # Sample data for DB seeding
 │   ├── add_review.html         # Add Review form template
 │   ├── index.html              # Home page template
 │   ├── p4_seed_file.sql        # Sample data for DB seeding
@@ -51,9 +52,11 @@ holbertonschool-hbnb/
 │   ├── tables.sql              # SQL schema definition
 │   ├── requirements.txt        # Project dependencies
 │   ├── run.py                  # App entry point
-│   ├── README.md               # Project documentation
-│   ├── ER_Diagrams.png         # Mermaid-generated schema diagram
-│   └── tests/
+│   ├── config.py               # App and DB configuration
+│   ├── README.md               # Part 4 Project documentation
+├── README.md                   # Project documentation
+├── ER_Diagrams.png             # Mermaid-generated schema diagram
+└── tests/
 │       ├── part2/              # Legacy tests from part 2
 │       ├── part3/              # Tests for JWT, DB, and relationships
 │       ├── task3_endpoint_testing.md
@@ -69,7 +72,7 @@ holbertonschool-hbnb/
 
 - **HTML Templates**: Added templates for login, home page, place listings and review creation.
 
-- **Authentication**: JWT authentication is now integrated into the browser using Local Storage.
+- **Authentication**: JWT authentication is now integrated into the browser using cookies for JWT token storage.
 
 - **Dynamic Rendering**: Javascript now handles API calls, token storage, DOM updates and user interactions.
   
@@ -137,17 +140,12 @@ python3 run.py
 ### Testing
 https://github.com/Anna-Halaapiapi/holbertonschool-hbnb/blob/main/tests/part4/manual_testing.md
 
-### Run Unit Tests
-```bash
-python3 -m app.models.model_tests.user_test
-python3 -m app.models.model_tests.place_test
-python3 -m app.models.model_tests.amenity_test
-```
 
 ## Authors
 - Ashleigh Henna
 - Toni Mathieson
 - Anna Halaapiapi
 - Madison Fleming
+
 
 
