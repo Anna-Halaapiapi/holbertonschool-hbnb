@@ -9,19 +9,19 @@ A full-stack, Cyberpunk-themed accommodation platform for booking futuristic lod
 The project is divided into four major parts, each building on the previous version:
 - <b>Part 1: System Architecture</b>  
 Technical documentation and UML diagrams providing a high-level overview of the system's architecture.  
-Jump to  👉 [Part 1 README](part1/README.md)
+Jump to ⟶ 💠 [Part 1 README](part1/README.md) 💠
 
 - <b>Part 2: API and Business Logic Layer</b>  
 Implementation of the core business logic, models, and an in-memory repository used to simulate data persistence during early development.  
-Jump to 👉 [Part 2 README](part2/README.md)
+Jump to ⟶ 💠 [Part 2 README](part2/README.md) 💠
 
 - <b>Part 3: Authentication and Database</b>  
 Implementation of JWT-based authentication, and migration from in-memory storage to SQLAlchemy and SQLite for data persistence.  
-Jump to 👉 [Part 3 README](part3/README.md)
+Jump to ⟶ 💠 [Part 3 README](part3/README.md) 💠
 
 - <b>Part 4: Simple Web Client</b>  
 Implementation of HTML, CSS, and vanilla JavaScript connected to the backend, enabling user interaction, authentication and review submission.  
-Jump to 👉 [Part 4 README](part4/README.md)
+Jump to ⟶ 💠 [Part 4 README](part4/README.md) 💠
 
 ## 📡Tech Stack
 - Python
