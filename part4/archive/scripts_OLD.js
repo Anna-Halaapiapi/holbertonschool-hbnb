@@ -177,30 +177,15 @@ function displayPlaces(places) {
   if (!placesList) return;
   placesList.innerHTML = '';
 
-  //add image list for loop
-  const images = [
-    "images/place1.png",
-    "images/place2.png",
-    "images/place3.png",
-    "images/place4.png",
-    "images/place5.png",
-    "images/place6.png"
-  ];
-
-  places.forEach((place, index) => {
+  places.forEach(place => {
     const card = document.createElement('div');
     card.className = 'place-card';
     card.setAttribute('data-price', place.price);
-    const imgSrc = images[index];
     card.innerHTML = `
-      <div class="place-image-container">
-        <img src="${imgSrc}" class="place-image" alt="${place.title}">
-      </div>
-
       <h3>${place.title}</h3>
       <p>Price: $${place.price}/night</p>
       <p>${place.description}</p>
-      <a href="place.html?id=${place.id}&img=${index}" class="details-button">View Details</a>
+      <a href="place.html?id=${place.id}" class="details-button">View Details</a>
     `;
     placesList.appendChild(card);
   });
@@ -229,24 +214,6 @@ function displayPlaceDetails(place) {
   //console.log("API Place Data:", place); // Debugging line
   const placeInfo = document.getElementById('place-info');
   const reviewsSection = document.getElementById('reviews-list');
-
-  //allows image from index to populate on individual place
-  const images = [
-    "images/place1.png",
-    "images/place2.png",
-    "images/place3.png",
-    "images/place4.png",
-    "images/place5.png",
-    "images/place6.png"
-  ];
-
-  const imgIndex = (new URLSearchParams(window.location.search).get("img"));
-  const placeImageDiv = document.getElementById("place-image");
-  placeImageDiv.innerHTML = `
-    <div class="place-image-container">
-      <img src="${images[imgIndex]}" class="place-image" alt="${place.title}">
-    </div>
-  `;
 
   if (placeInfo) {
     placeInfo.innerHTML = '';
