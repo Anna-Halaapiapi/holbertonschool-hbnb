@@ -1,4 +1,6 @@
-#  🟣🤖 HBnB Project: Cyberpunk Edition 🤖🟣
+![Banner](part4/images/CyberPunk-Banner.png)
+
+# 🟣🤖HBnB Project: Cyberpunk Edition🤖🟣
 
 ## ⚡ Project Overview
 A full-stack, Cyberpunk-themed accommodation platform for booking futuristic lodging across a dystopian landscape. Across four major evolutions, the project transforms from system architecture, to backend logic, to database integration and authentication, and finally, to building the user interface. This project was completed as part of the Holberton School curriculum, and inspired by Airbnb.
