@@ -133,22 +133,6 @@ sqlite3 instance/development.db < p4_seed_file.sql
 ```bash
 python3 run.py
 ```
-### Open the login page to view the user interface
-```bash
-### screenshot open with live server
-```
-### Login as a user
-```bash
-### screenshot login page
-```
-### View Place Details
-```bash
-### view place details
-```
-### Leave a Review
-```bash
-### leave a review page
-```
 
 ### Testing
 https://github.com/Anna-Halaapiapi/holbertonschool-hbnb/blob/main/tests/part4/manual_testing.md
@@ -165,4 +149,5 @@ python3 -m app.models.model_tests.amenity_test
 - Toni Mathieson
 - Anna Halaapiapi
 - Madison Fleming
+
 
