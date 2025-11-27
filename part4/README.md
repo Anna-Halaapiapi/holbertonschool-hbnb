@@ -150,10 +150,8 @@ python3 run.py
 ### leave a review page
 ```
 
-### Testing Instructions
-```
-### add link to testing page
-```
+### Testing
+https://github.com/Anna-Halaapiapi/holbertonschool-hbnb/blob/main/tests/part4/manual_testing.md
 
 ### Run Unit Tests
 ```bash
@@ -167,3 +165,4 @@ python3 -m app.models.model_tests.amenity_test
 - Toni Mathieson
 - Anna Halaapiapi
 - Madison Fleming
+
