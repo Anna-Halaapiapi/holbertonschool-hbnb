@@ -257,21 +257,3 @@ button:hover, .details-button:hover, .login-button:hover {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--neon-cyan);
 }
-
-/* container for image */
-.place-image-container {
-  width: 100%;
-  min-width: 340px;
-  height: 300px;
-  overflow: hidden;
-  border-bottom: 1px solid var(--neon-cyan);
-  margin-bottom: 15px;
-}
-
-/* actual image fills container size */
-.place-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
